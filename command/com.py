@@ -12,6 +12,8 @@ class Command:
                         self.variaveis[tokens[1]] = self.evaluate(tokens[3:])
                 case "list":
                     print(self.variaveis)
+                case _:
+                    raise Exception(f"""Comando desconhecido --> "{tokens[0]}", linha {linhas.index(linha)+1}""")
     
     def getTokens(self, linha):
         tokens = []
