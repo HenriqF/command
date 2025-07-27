@@ -47,7 +47,6 @@ class Command:
         return(tokens)
 
     def evaluate(self, tokens):
-        #adicionar menos urinario (unario)
         def revPolNot(tokens):
             ordem = {"+":1,"-":1,"*":2,"/":2}
             result = []
