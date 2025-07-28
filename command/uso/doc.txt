@@ -1,7 +1,0 @@
-Palavras chave:
-    Variaveis:
-        edit -> Usado para criar e modificar variaveis: 
-
-            edit NOME = VALOR
-
-        list -> Mostra todas as variaveis.
