@@ -16,22 +16,42 @@
         1 + (VariavelA - VariavelB)
         fruta + maca
 
-    
-    Quando uma expressão entre dois tipos diferentes é executada (e.x.: fruta + 12), um erro como o seguinte surge:
 
-        Operação com dois tipos diferentes: int + NoneType
+<details>
+<summary>Erros</summary>
 
-    Quando uma operação é mal-escrita (e.x.: +-3), um erro como o seguinte surge:
+* Quando uma expressão entre dois tipos diferentes é executada (e.x.: fruta + 12), um erro como o seguinte surge:
+
+        Operação com dois tipos diferentes: num + nil
+
+* Quando uma operação é mal-escrita (e.x.: +-3), um erro como o seguinte surge:
 
         Operação matemática malformada.
 
+</details>
+
+<br>
 
 
 
 
+# Variáveis:
+<details>
+<summary>Tipos de variaveis (dados) </summary>
 
 
-# Criando e Modificando Variáveis:
+* Existem três tipos principais de dados simples nessa linguagem:
+
+        Tipo numérico (num): Qualquer número.
+        Tipo string   (txt): Qualquer sequência de texto.
+        Tipo nenhum   (nil): Representa uma ausência de valor.
+                
+* Para representar valores booleanos (verdadeiro / falso), é usado um tipo numérico. O valor 1 representa a verdade, enquanto qualquer outro é interpretado como falso.
+
+</details>
+<details>
+<summary>Criando e Modificando Variaveis</summary>
+
 * Para criar e/ou modificar o valor de uma variável, utiliza-se a seguinte estrutura:
 
         set NOME VALOR.
@@ -39,7 +59,11 @@
 <br>
 
 * "NOME" deve conter apenas letras (maiúsculas ou minúsculas) ou underlines.<br>
-A violação dessa regra resultará em um erro como o seguinte:
+* "VALOR" é uma [OPERAÇÃO](#operações)
+<details>
+<summary>Erros</summary>
+
+* Se o nome de uma variável fugir dos padrões de nomenclatura, um erro como o seguinte aparecerá:
 
         Caractere proibido no nome da variavel. --> "set variavelLegal12 1+2", linha 1 
 
@@ -51,6 +75,26 @@ A violação dessa regra resultará em um erro como o seguinte:
 A omissão da operação resultará em um erro como o seguinte:
 
         Comando set sem operação. --> "set variavel", linha 4
+</details>
+</details>
+
+<br>
+
+# Condicionais e adjacentes
+
+<details>
+<summary>Comando <b> IF </b></summary>
+
+
+* Esse comando segue a seguinte estrutura: 
+
+        if OPERAÇÃO
+            código condicional
+
+* Ao ser executado, o comando avalia a [OPERAÇÃO](#operações). Se o resultado for 1, e SOMENTE 1, o bloco identado (código condicional) é executado.
+
+</details>
+<br>
 
 
 # Usando o Console:
@@ -69,9 +113,7 @@ A omissão da operação resultará em um erro como o seguinte:
         SAÍDA:
 
         Numero: 12
-    A omissão de argumentos resultará em um erro como o seguinte:
 
-        Comando show sem argumentos. --> "show", linha 1
 
 
 * Para poder mostrar o nome de uma variável, envolve-se o termo com "`", chamado de indicador:
@@ -83,7 +125,18 @@ A omissão da operação resultará em um erro como o seguinte:
 
         Valor de variavel: 12
     
-    Escrever uma estrutura não-balanceada de indicadores resultará em um erro como o seguinte:
+
+<details>
+<summary>Erros</summary>
+
+* Escrever uma estrutura não-balanceada de indicadores resultará em um erro como o seguinte:
 
         Quantia indevida de indicadores --> "show `b", linha 2
+
+* A omissão de argumentos resultará em um erro como o seguinte:
+
+        Comando show sem argumentos. --> "show", linha 1
+</details>
+
+
 </details>

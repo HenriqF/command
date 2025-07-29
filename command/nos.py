@@ -2,15 +2,37 @@ class Variavel:
     def __init__(self, nome, valor):
         self.nome = nome
         self.valor = valor
+    
+    def info(self):
+        print("info variavel #####")
+        print(self.nome)
+        print(self.valor)
+        print("###################")
+
+#Comandos
 
 class Setter:
-    def __init__(self, setwho, setto):
+    def __init__(self, setwho, setto, depth):
         self.setwho = setwho
         self.setto = setto
+        self.depth = depth
+    def info(self):
+        print("info setter #######")
+        print(self.setwho)
+        print(self.setto)
+        print(self.depth)
+        print("###################")
 
 class Show:
-    def __init__(self, content):
+    def __init__(self, content, depth):
         self.content = content
+        self.depth = depth
+
+    def info(self):
+        print("info show #########")
+        print(self.content)
+        print(self.depth)
+        print("###################")
 
     def show(self, variaveis):
         content = self.content
@@ -31,3 +53,18 @@ class Show:
                 i+=1
             pass
         print()     
+
+class Conditional:
+    def __init__(self, pergunta, corpo, fim, depth):
+        self.pergunta = pergunta
+        self.corpo = corpo
+        self.fim = fim
+        self.depth = depth
+
+    def info(self):
+        print("info conditional###")
+        print(self.pergunta)
+        print(self.corpo)
+        print(self.fim)
+        print(self.depth)
+        print("###################")
