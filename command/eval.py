@@ -18,9 +18,13 @@ class Eval:
 
                 #print(self.variaveis, token)
                 if token in self.variaveis:
-                    result.append(self.getValor(token))
-
+                    valor = self.getValor(token)
+                    if isinstance(valor, int):
+                        valor = float(valor)
+                    result.append(valor)
                 elif not isinstance(token, str):
+                    if isinstance(token, int):
+                        token = float(token)
                     result.append(token)
                 elif token in ordem:
                     while stackOrdem and stackOrdem[-1] in ordem and ordem[stackOrdem[-1]] >= ordem[token]:
@@ -70,4 +74,7 @@ class Eval:
                 raise Exception("Operação não presente.")
             return stack[0]
         
-        return(getResult(tokens))
+        result = getResult(tokens)
+        if int(result) == result:
+            result = int(result)
+        return(result)

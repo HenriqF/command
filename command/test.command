@@ -1,14 +1,10 @@
-if 1
-    show 0
-    show 1
-    show 2
-    if 1
-        show alpha
-        show simga
-        if 0
-            show porraloca
-            show macumba
-            show pedrada
-        show omega
-    show 3
-show 4
+if 0
+    show ok
+elif 0
+    show ok
+elif 0
+    show ok
+elif 0
+    show ok
+else
+    show EXECUTADO

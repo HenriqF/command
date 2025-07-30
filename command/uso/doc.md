@@ -94,8 +94,52 @@ A omissão da operação resultará em um erro como o seguinte:
 * Ao ser executado, o comando avalia a [OPERAÇÃO](#operações). Se o resultado for 1, e SOMENTE 1, o bloco identado (código condicional) é executado.
 
 </details>
-<br>
 
+
+<details>
+<summary>Comando <b> ELIF </b></summary>
+
+* Esse comando segue a seguinte estrutura: 
+
+        if 10-10
+            set a 0
+        elif OPERAÇÃO
+            código condicional
+
+* Ao ser executado, o comando avalia a [OPERAÇÃO](#operações). Se o resultado for 1 e o resultado do comando condicional passado não for 1, o bloco identado (código condicional) é executado.
+* É possível criar encadeamentos com esse comando:
+
+        if 0
+            show ok!
+        elif 0
+            show ok!
+        elif 1
+            show EXECUTADO!
+        elif 1
+            show ok!
+
+        SAÍDA:
+
+        EXECUTADO!
+
+
+
+</details>
+
+
+<details>
+<summary>Comando <b> ELSE </b></summary>
+
+* Esse comando segue a seguinte estrutura: 
+
+        if 10-10
+            set a 0
+        else
+            código condicional
+
+* Caso o resultado do comando condicional passado não seja 1, o bloco de código identado (código condicional) será executado.
+</details>
+<br>
 
 # Usando o Console:
 <details>

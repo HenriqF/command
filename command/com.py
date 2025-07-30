@@ -26,6 +26,15 @@ class Parser:
                         raise Exception(f"""Condicional sem argumento. --> "{linha}", linha {linhas.index(linha)+1}""")
                     self.nodes.append(Conditional(pergunta=tokens[1:],corpo=None ,fim=None, depth=depth))
 
+                case "elif":
+                    tokens = [x for x in tokens if x != " "]
+                    if 1 >= len(tokens):
+                        raise Exception(f"""Condicional sem argumento. --> "{linha}", linha {linhas.index(linha)+1}""")
+                    self.nodes.append(ConditionalElse(pergunta=tokens[1:],corpo=None, fim=None, depth=depth))
+
+                case "else":
+                    self.nodes.append(Else(corpo=None, fim=None, depth=depth))
+
                 case "set":
                     tokens = [x for x in tokens if x != " "]
 
@@ -42,7 +51,7 @@ class Parser:
 
                     if tokens[1] not in self.variaveis:
                         self.varnodes.append(Variavel(nome=tokens[1], valor=None))
-                        self.variaveis[tokens[1]] = self.nodes[-1]
+                        self.variaveis[tokens[1]] = self.varnodes[-1]
 
                 case "show":
                     if " " in tokens:
@@ -63,10 +72,12 @@ class Parser:
         return self
     
     def meaningParse(self):
+        # for node in self.nodes:
+        #     print(node)
         i = 0
         nodeCount = len(self.nodes)
         while i < nodeCount:
-            if type(self.nodes[i]) == Conditional:
+            if type(self.nodes[i]) in [Conditional,ConditionalElse,Else]:
                 condDepth = self.nodes[i].depth
                 if i+1 >= nodeCount or self.nodes[i+1].depth <= condDepth:
                     raise Exception(f"""Condicional sem corpo.""")
@@ -125,8 +136,8 @@ class Parser:
         tokens.insert(0, depth)
         return(tokens)
 
-
 def execute(nodes, variaveis):
+    lastConditionalResult = {}
     i = 0 
     while i < len(nodes):
         node = nodes[i]
@@ -139,20 +150,35 @@ def execute(nodes, variaveis):
 
         elif type(node) is Conditional:
             sucessoCondicional = Eval(variaveis).evaluate(node.pergunta)
+            lastConditionalResult[node.depth] = sucessoCondicional
             if sucessoCondicional == 1:
                 i = nodes.index(node.corpo)-1 
+            else:
+                i = nodes.index(node.fim)
+
+        elif type(node) is ConditionalElse:
+            if lastConditionalResult[node.depth] != 1:
+                sucessoCondicional = Eval(variaveis).evaluate(node.pergunta)
+                lastConditionalResult[node.depth] = sucessoCondicional
+                if sucessoCondicional == 1:
+                    i = nodes.index(node.corpo)-1 
+                else:
+                    i = nodes.index(node.fim)
+            else:
+                i = nodes.index(node.fim)
+
+        elif type(node) is Else:
+            if lastConditionalResult[node.depth] != 1:
+                lastConditionalResult[node.depth] = 1
+                i = nodes.index(node.corpo)-1
             else:
                 i = nodes.index(node.fim)
         i += 1
     return
 
-
-
 startTime = Time.time()
 astCommands = Parser(varnodes=[], nodes=[],variaveis={}).parse(open("test.command").read())
 parseTime = Time.time()-startTime
-
-
 
 startTime = Time.time()
 execute(astCommands.nodes, astCommands.variaveis)

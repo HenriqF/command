@@ -51,7 +51,6 @@ class Show:
                 else:
                     print(content[i], end="")
                 i+=1
-            pass
         print()     
 
 class Conditional:
@@ -64,6 +63,34 @@ class Conditional:
     def info(self):
         print("info conditional###")
         print(self.pergunta)
+        print(self.corpo)
+        print(self.fim)
+        print(self.depth)
+        print("###################")
+
+class ConditionalElse:
+    def __init__(self, pergunta, corpo, fim, depth):
+        self.pergunta = pergunta
+        self.corpo = corpo
+        self.fim = fim
+        self.depth = depth
+
+    def info(self):
+        print("info condElse#########")
+        print(self.pergunta)
+        print(self.corpo)
+        print(self.fim)
+        print(self.depth)
+        print("######################")
+
+class Else:
+    def __init__(self, corpo, fim, depth):
+        self.corpo = corpo
+        self.fim = fim
+        self.depth = depth
+
+    def info(self):
+        print("info else##########")
         print(self.corpo)
         print(self.fim)
         print(self.depth)
