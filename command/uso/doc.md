@@ -209,8 +209,8 @@ A omissão da operação resultará em um erro como o seguinte:
         set a 5
         while a > 0
             set a a-1
-        elif a = -1
-            show Agora, `a` e negativo!
+        elif a = 0
+            show Agora, `a` e nulo!
 
         SAÍDA:
 
