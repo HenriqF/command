@@ -20,7 +20,7 @@ class Operacao:
                 if not(isinstance(esquerda,(str)) and isinstance(direita, (int,float)) and self.operador == "*"):
                     Erro(linha=self.askNode.linha, tipo="Operação proibida com tipos diferentes.")
 
-        if isinstance(esquerda, (str)) and ((self.operador not in {"+","*","$",">","<"}) or (isinstance(direita, (str)) and self.operador == "*")):
+        if isinstance(esquerda, (str)) and ((self.operador not in {"+","*","=",">","<"}) or (isinstance(direita, (str)) and self.operador == "*")):
             Erro(linha=self.askNode.linha, tipo="Operador mal-usado.")
 
         match self.operador:
@@ -71,19 +71,19 @@ class Operacao:
             #Comparadores
             case ">":
                 if isinstance(esquerda, (float,int)):
-                    return(1.0 if esquerda >= direita else 0.0)
+                    return(1.0 if esquerda > direita else 0.0)
                 if isinstance(esquerda, str):
-                    return(1.0 if len(esquerda) >= len(direita) else 0.0)
+                    return(1.0 if len(esquerda) > len(direita) else 0.0)
             case "<":
                 if isinstance(esquerda, (float,int)):
-                    return(1.0 if esquerda <= direita else 0.0)
+                    return(1.0 if esquerda < direita else 0.0)
                 if isinstance(esquerda, str):
-                    return(1.0 if len(esquerda) <= len(direita) else 0.0)
-            case "$":
-                if isinstance(esquerda, str):
-                    return(1.0 if esquerda == direita else 0.0)
+                    return(1.0 if len(esquerda) < len(direita) else 0.0)
+            case "=":
+                if direita == esquerda:
+                    return(1.0)
                 else:
-                    Erro(linha=self.askNode.linha, tipo="Comparador de texto com tipo numérico")
+                    return(0.0)
 
 class Eval:
     def __init__(self,variaveis, askNode):
@@ -93,13 +93,13 @@ class Eval:
         self.ordem = {"~":0, #aproximacao ( 1~10.07 arredonde 10.07 para a primeira casa : 10.1)
                       "|":1, #ou
                       "&":2, #ands
-                      ">":3, "<":3, "$":3, #comparacao ($ comparador de strings)
+                      ">":3, "<":3, "=":3,
                       "+":4,"-":4,
                       "*":5,"/":5,"%":5,
                       "^":6,
                       "!":7,"u-":7
                       }
-        self.binario = {"~","|","&",">","<","$","+","-","*","/","%","^"}
+        self.binario = {"~","|","&",">","<","=","+","-","*","/","%","^"}
         self.unario = {"!","u-"}
 
     def getValor(self,token):
@@ -108,7 +108,8 @@ class Eval:
             valor = self.variaveis[valor].valor
         return valor 
 
-    def evaluate(self, tokens):
+    def evaluate(self, operation):
+        tokens = operation[:]
         def transform(tokens):
             i = 0
             while i < len(tokens):
@@ -139,7 +140,10 @@ class Eval:
                 elif token == ")":
                     while stacksinal and stacksinal[-1] != "(":
                         final.append(stacksinal.pop())
-                    stacksinal.pop()
+                    if stacksinal:
+                        stacksinal.pop()
+                    else:
+                        Erro(linha=self.askNode.linha, tipo="Parenteses não-balanceados.")
                 else:
                     final.append(token)
             while stacksinal:

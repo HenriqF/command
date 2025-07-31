@@ -27,7 +27,7 @@
 
         > : 3 : Maior ou igual : 10 > 5 = 1 (Retorna 1 caso (a>=b), 0 caso contrário.)
         < : 3 : Menor ou igual : 10 < 5 = 0 (Retorna 1 caso (a<=b), 0 caso contrário.)
-        $ : 3 : Texto igual    : abc $ abc = 1 (Compara strings. Retonar 1 caso a = b, 0 caso contrário.)
+        = : 3 : Igualdade      : 10 = 10 = 1 (Retorna 1 caso (a=b), 0 caso contrário.)
 
         Nota: Se os dois primeiros comparadores (>,<) forem usados com strings, a comparação será feita com base na quantidade de caracteres: abc > abdc será executado como 3 > 4
 
@@ -82,6 +82,10 @@
 * Quando se escreve uma operação incorreta, um erro como o seguinte aparece:
 
         Erro : Operação malformada --> "set a --2", linha 1
+
+* Quando parenteses não estão balanceados, um erro como o seguinte aparece:
+
+        Erro : Parenteses não-balanceados. --> "set a 1 > 2)", linha 1
 
 
 </details>
@@ -198,6 +202,23 @@ A omissão da operação resultará em um erro como o seguinte:
 </details>
 
 <details>
+<summary>Casos especiais </b></summary>
+
+* O comando [while](#loops), por também conter uma "condicional", pode entrar em um encadeamento de condicionais:
+
+        set a 5
+        while a > 0
+            set a a-1
+        elif a = -1
+            show Agora, `a` e negativo!
+
+        SAÍDA:
+
+        Agora, a e negativo!
+
+</details>
+
+<details>
 <summary>Erros </summary>
 
 * Caso seja criado um "if" ou um "elif" sem operação, um erro como o seguinte aparecerá:
@@ -211,6 +232,25 @@ A omissão da operação resultará em um erro como o seguinte:
 
 
 </details>
+
+
+<br>
+
+# Loops
+<details>
+<summary> Comando <b> WHILE </b> </summary>
+
+* Um loop, ou ciclo, é uma estrutura que repete uma porção de código.
+* Para criar um loop, usa-se a seguinte estrutura:
+
+        while OPERAÇÃO
+            código
+
+* Enquanto o valor da [OPERAÇÃO](#operações) for igual a 1, o código identado será executado.
+* Após cada execução, a operação é reavaliada. Se por ventura deixar de valer 1, o ciclo é quebrado e o programa segue.
+
+</details>
+
 
 
 <br>
@@ -254,6 +294,37 @@ A omissão da operação resultará em um erro como o seguinte:
 * A omissão de argumentos resultará em um erro como o seguinte:
 
         Erro : Comando show sem argumentos. --> "show", linha 1
+</details>
+
+
+</details>
+
+
+<details>
+<summary>Comando <b> GET </b></summary>
+
+* Para jogar dados no console, utiliza-se a seguinte estrutura:
+
+        get VARIAVEL ARGUMENTOS
+
+* VARIAVEL deve ser o nome de uma variavel já declarada
+* ARGUMENTOS é um trecho opicional, um texto que aparece no console quando o comando é executado.
+
+<details>
+<summary>Erros</summary>
+
+* Tentar usar o comando get com uma variavel não declarada resulta em um erro como o seguinte:
+
+        Erro : Comando get em variavel não declarada. --> "get var", linha 1
+
+* Tentar usar o comando get sem nomear uma variavel resulta em um erro como o seguinte:
+
+        Erro : Comando get sem variavel. --> "get", linha 1
+
+* Não separar a variavel do argumento resulta em um erro como o seguinte:
+
+        Erro : Comando get com argumentos misturados. --> "get var-->", linha 2
+
 </details>
 
 

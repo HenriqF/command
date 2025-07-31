@@ -21,6 +21,13 @@ class Parser:
             depth = tokens.pop(0)
 
             match tokens[0]:
+                case "while":
+                    tokens = [x for x in tokens if x != " "] 
+                    if 1 >= len(tokens):
+                        Erro(linha=[linha, i+1], tipo="Loop sem argumento.")
+                    self.nodes.append(WhileLoop(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
+
+
                 case "if":
                     tokens = [x for x in tokens if x != " "] 
                     if 1 >= len(tokens):
@@ -35,6 +42,8 @@ class Parser:
 
                 case "else":
                     self.nodes.append(Else(corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
+
+
 
                 case "set":
                     tokens = [x for x in tokens if x != " "]
@@ -61,6 +70,24 @@ class Parser:
                         Erro(linha=[linha, i+1], tipo="Quantia indevida de indicadores.")
                     self.nodes.append(Show(content=tokens[1:], depth=depth, linha=[linha, i+1]))
 
+                case "get":
+                    if " " in tokens:
+                        tokens.remove(" ")
+                    tokens = tokens[1:]
+                    if 0 >= len(tokens):
+                        Erro(linha=[linha, i+1], tipo="Comando get sem variavel.")
+                    variavelNome = tokens[0]
+                    conteudo = None
+                    if len(tokens) > 1 and tokens[1] == " ":
+                        conteudo = tokens[2:]
+                    elif len(tokens) > 1 and tokens[1] != " ":
+                        Erro(linha=[linha, i+1], tipo="Comando get com argumentos misturados.")
+
+                    if variavelNome not in self.variaveis:
+                        Erro(linha=[linha, i+1], tipo="Comando get em variavel não declarada.")
+
+                    self.nodes.append(Get(content=conteudo, setwho=variavelNome, depth=depth, linha=[linha, i+1]))
+
                 case "#":
                     pass
 
@@ -71,28 +98,35 @@ class Parser:
         return self
     
     def meaningParse(self):
-        for i, node in enumerate(self.nodes):
-            self.indexNodes[node] = i
-            
         i = 0
         nodeCount = len(self.nodes)
         while i < nodeCount:
-            if isinstance(self.nodes[i], Conditional):
-                condDepth = self.nodes[i].depth
-                if i+1 >= nodeCount or self.nodes[i+1].depth <= condDepth:
-                    Erro(self.nodes[i].linha, tipo="Condicional sem corpo")
+            if isinstance(self.nodes[i], TemCorpo):
+                nodeDepth = self.nodes[i].depth
+                if i+1 >= nodeCount or self.nodes[i+1].depth <= nodeDepth:
+                    Erro(self.nodes[i].linha, tipo="Comando sem corpo")
                 else:
                     self.nodes[i].corpo = self.nodes[i+1]
                     j = i+2
                     while j < nodeCount:
-                        if self.nodes[j].depth <= condDepth:
+                        if self.nodes[j].depth <= nodeDepth:
                             self.nodes[i].fim = self.nodes[j-1]
                             break
                         j += 1
                     if self.nodes[i].fim == None:
                         self.nodes[i].fim = self.nodes[j-1]
 
+            if isinstance(self.nodes[i], Loop):
+                endNodeIndex = self.nodes.index(self.nodes[i].fim)+1
+                self.nodes.insert(endNodeIndex, EndLoop(loopPai=self.nodes[i], depth=self.nodes[i].depth))
+                self.nodes[i].fim = self.nodes[endNodeIndex]
+                nodeCount+=1
+
             i += 1
+
+
+        for i, node in enumerate(self.nodes):
+            self.indexNodes[node] = i
         pass
 
     def getTokens(self, linha):
@@ -138,20 +172,29 @@ class Parser:
 
 def execute(nodes, variaveis, nodesIndex):
     lastConditionalResult = {}
+
     i = 0 
     while i < len(nodes):
         node = nodes[i]
-
-        if not isinstance(node, Conditional):
+        if not isinstance(node, (Conditional, Loop, Dummy)):
             lastConditionalResult[node.depth] = 1
 
         match node:
+            
+            case WhileLoop():
+                sucessoCondicional = Eval(variaveis=variaveis, askNode=node).evaluate(node.pergunta)
+                lastConditionalResult[node.depth] = sucessoCondicional
+                if sucessoCondicional != 1:
+                    i = nodesIndex[node.fim]
+
             case Setter():
                 variaveis[node.setwho].valor = Eval(variaveis=variaveis, askNode=node).evaluate(node.setto)
-                #print("set", variaveis[node.setwho].nome,"to", variaveis[node.setwho].valor)
 
             case Show():
                 node.show(variaveis)
+        
+            case Get():
+                variaveis[node.setwho].valor = node.get()
 
             case ConditionalIf():
                 sucessoCondicional = Eval(variaveis=variaveis, askNode=node).evaluate(node.pergunta)
@@ -178,6 +221,11 @@ def execute(nodes, variaveis, nodesIndex):
                     i = nodesIndex[node.corpo]-1
                 else:
                     i = nodesIndex[node.fim]
+
+
+            case EndLoop():
+                i = nodesIndex[node.loopPai]-1
+
         i += 1
     return
 

@@ -3,13 +3,6 @@ class Variavel:
         self.nome = nome
         self.valor = valor
         self.linha = linha
-    
-    def info(self):
-        print("info variavel #####")
-        print(self.nome)
-        print(self.valor)
-        print("###################")
-
 class Erro:
     def __init__(self, linha, tipo):
         self.linha = linha
@@ -19,33 +12,29 @@ class Erro:
     def expliciteErro(self):
         print(f"""\033[31mErro\033[0m : {self.tipo} --> "\033[1m{self.linha[0]}\033[0m", \033[31mlinha {self.linha[1]}\033[0m""")
         exit(1)
+
+#SuperClasses
+class Dummy:
+    pass
+class TemCorpo:
+    pass
+class Loop(TemCorpo):
+    pass
+class Conditional(TemCorpo):
+    pass
+
 #Comandos
-
-
 class Setter:
     def __init__(self, setwho, setto, depth, linha):
         self.setwho = setwho
         self.setto = setto
         self.depth = depth
         self.linha = linha
-    def info(self):
-        print("info setter #######")
-        print(self.setwho)
-        print(self.setto)
-        print(self.depth)
-        print("###################")
-
 class Show:
     def __init__(self, content, depth, linha):
         self.content = content
         self.depth = depth
         self.linha = linha
-
-    def info(self):
-        print("info show #########")
-        print(self.content)
-        print(self.depth)
-        print("###################")
 
     def show(self, variaveis):
         content = self.content
@@ -65,17 +54,42 @@ class Show:
                     print(content[i], end="")
                 i+=1
         print()     
+class Get:
+    def __init__(self, content, setwho, depth, linha):
+        self.content = content
+        self.setwho = setwho
+        self.depth = depth
+        self.linha = linha
+
+    def get(self):
+
+        if self.content is not None:
+            got = (input(''.join(self.content)))
+        else:
+            got = (input())
+        try:
+            got = float(got)
+            if int(got) == got:
+                got = int(got)
+        except:
+            pass
+        return(got)
 
 
-
-
-
-class TemCorpo:
-    pass
-
-class Conditional(TemCorpo):
-    pass
-
+#Loops
+class WhileLoop(Loop):
+    def __init__(self, pergunta, corpo, fim, depth, linha):
+        self.pergunta = pergunta
+        self.corpo = corpo
+        self.fim = fim
+        self.depth = depth
+        self.linha = linha
+class EndLoop(Dummy):
+    def __init__(self, loopPai, depth):
+        self.loopPai = loopPai
+        self.depth = depth
+        
+#Condicionais
 class ConditionalIf(Conditional):
     def __init__(self, pergunta, corpo, fim, depth, linha):
         self.pergunta = pergunta
@@ -83,15 +97,6 @@ class ConditionalIf(Conditional):
         self.fim = fim
         self.depth = depth
         self.linha = linha
-
-    def info(self):
-        print("info conditional###")
-        print(self.pergunta)
-        print(self.corpo)
-        print(self.fim)
-        print(self.depth)
-        print("###################")
-
 class ConditionalElse(Conditional):
     def __init__(self, pergunta, corpo, fim, depth, linha):
         self.pergunta = pergunta
@@ -99,25 +104,9 @@ class ConditionalElse(Conditional):
         self.fim = fim
         self.depth = depth
         self.linha = linha
-
-    def info(self):
-        print("info condElse#########")
-        print(self.pergunta)
-        print(self.corpo)
-        print(self.fim)
-        print(self.depth)
-        print("######################")
-
 class Else(Conditional):
     def __init__(self, corpo, fim, depth, linha):
         self.corpo = corpo
         self.fim = fim
         self.depth = depth
         self.linha = linha
-
-    def info(self):
-        print("info else##########")
-        print(self.corpo)
-        print(self.fim)
-        print(self.depth)
-        print("###################")
