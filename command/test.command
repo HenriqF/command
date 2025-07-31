@@ -6,4 +6,5 @@ while !(guess = key)
         show Menor...
     elif guess < key
         show Maior...
-show acertou!
+else
+    show acertou!
