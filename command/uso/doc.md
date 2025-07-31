@@ -120,7 +120,7 @@ A omissão da operação resultará em um erro como o seguinte:
 
 <br>
 
-# Condicionais e adjacentes
+# Condicionais
 
 <details>
 <summary>Comando <b> IF </b></summary>
