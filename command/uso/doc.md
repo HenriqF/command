@@ -25,8 +25,8 @@
 
 * Comparadores:
 
-        > : 3 : Maior ou igual : 10 > 5 = 1 (Retorna 1 caso (a>=b), 0 caso contrário.)
-        < : 3 : Menor ou igual : 10 < 5 = 0 (Retorna 1 caso (a<=b), 0 caso contrário.)
+        > : 3 : Maior          : 10 > 5 = 1 (Retorna 1 caso (a>b), 0 caso contrário.)
+        < : 3 : Menor          : 10 < 5 = 0 (Retorna 1 caso (a<b), 0 caso contrário.)
         = : 3 : Igualdade      : 10 = 10 = 1 (Retorna 1 caso (a=b), 0 caso contrário.)
 
         Nota: Se os dois primeiros comparadores (>,<) forem usados com strings, a comparação será feita com base na quantidade de caracteres: abc > abdc será executado como 3 > 4
