@@ -1,10 +1,4 @@
-if 0
-    show ok
-elif 0
-    show ok
-elif 0
-    show ok
-elif 0
-    show ok
-else
-    show EXECUTADO
+set a 10
+set b -1
+if -a < b
+    show a

@@ -1,13 +1,47 @@
 # Operações 
-* Uma operação é uma expressão lógica-matemática que segue a ordem padrão de precedência.
-* Operadores funcionais:
+* Uma operação é uma expressão lógica-matemática que segue uma ordem de precedência.
 
-        Soma: +
-        Subtração: -
-        Multiplicação: *
-        Divisão: /
-        Parenteses: ( )
-    
+<details>
+<summary> Operadores </summary>
+
+* Todos os operadores abaixo estão organizados da seguinte forma: símbolo, ordem de precedência (quanto maior, mais prioridade), função e um exemplo. 
+
+* Operadores unários: 
+        
+        ! : 7 : Not lógico   : !0 = 1
+        - : 7 : Menos unário : -1 = -1
+
+* Operadores binários:
+
+        | : 1 : Ou lógico    : 0 | 1 = 1
+        & : 2 : And lógico   : 0 & 1 = 0
+        + : 4 : Soma         : 1 + 2 = 3
+        - : 4 : Subtração    : 1 - 2 = -1
+        * : 5 : Multiplicação: 2 * 2 = 4
+        / : 5 : Divisão      : 2 / 2 = 1
+        % : 5 : Módulo       : 2 % 2 = 0
+        ^ : 6 : Potência     : 5 ^ 3 = 125
+        ~ : 0 : Aproximação  : 0~10.6 = 11 (a ~ b → arredonda o número a com b casas decimais)
+
+* Comparadores:
+
+        > : 3 : Maior ou igual : 10 > 5 = 1 (Retorna 1 caso (a>=b), 0 caso contrário.)
+        < : 3 : Menor ou igual : 10 < 5 = 0 (Retorna 1 caso (a<=b), 0 caso contrário.)
+        $ : 3 : Texto igual    : abc $ abc = 1 (Compara strings. Retonar 1 caso a = b, 0 caso contrário.)
+
+        Nota: Se os dois primeiros comparadores (>,<) forem usados com strings, a comparação será feita com base na quantidade de caracteres: abc > abdc será executado como 3 > 4
+
+* Parenteses:
+
+        Usados para "roubar" prioridade:
+
+        2*2+2 = 6
+        2*(2+2) = 8
+
+</details>
+
+<details>
+<summary> Uso </summary>
 
 * Operações podem envolver números, variáveis e em alguns casos, texto. Também podem ser compostos por apenas um elemento:
 
@@ -16,17 +50,22 @@
         1 + (VariavelA - VariavelB)
         fruta + maca
 
+</details>
 
 <details>
 <summary>Erros</summary>
 
-* Quando uma expressão entre dois tipos diferentes é executada (e.x.: fruta + 12), um erro como o seguinte surge:
+* Quando uma expressão entre dois tipos diferentes é executada (e.x.: abc + 2), um erro como o seguinte surge:
 
-        Operação com dois tipos diferentes: num + nil
+        Erro : Operação com dois tipos diferentes. --> "set a abc + 2", linha 1
 
 * Quando uma operação é mal-escrita (e.x.: +-3), um erro como o seguinte surge:
 
-        Operação matemática malformada.
+        Erro : Operação matemática malformada. --> "set a +-3", linha 1
+
+* Quando uma operação de lógica binária é executada com texto ( abc & bcd ), um erro como o seguinte surge:
+
+        Erro : Logica binária com valor não numérico --> "set a abc & abc", linha 1
 
 </details>
 
@@ -65,16 +104,17 @@
 
 * Se o nome de uma variável fugir dos padrões de nomenclatura, um erro como o seguinte aparecerá:
 
-        Caractere proibido no nome da variavel. --> "set variavelLegal12 1+2", linha 1 
+        Erro : Caractere proibido no nome da variavel. --> "set variavel12 10", linha 1
 
     A omissão do nome resultará em um erro como o seguinte:
 
-        Comando set sem nome. --> "set ", linha 4
+        Erro : Comando set sem nome --> "set ", linha 1
 
 * "VALOR" deve ser uma [Operação](#operações).<br>
 A omissão da operação resultará em um erro como o seguinte:
 
-        Comando set sem operação. --> "set variavel", linha 4
+        Erro : Comando set sem operação. --> "set variavel", linha 1
+
 </details>
 </details>
 
@@ -139,6 +179,23 @@ A omissão da operação resultará em um erro como o seguinte:
 
 * Caso o resultado do comando condicional passado não seja 1, o bloco de código identado (código condicional) será executado.
 </details>
+
+<details>
+<summary>Erros </summary>
+
+* Caso seja criado um "if" ou um "elif" sem operação, um erro como o seguinte aparecerá:
+
+        Erro : Condicional sem argumento. --> "if ", linha 1
+
+* Caso seja criada uma condicional sem corpo (código identado), um erro como o seguinte aparecerá:
+
+        Erro : Condicional sem corpo --> "if 10", linha 1
+
+
+
+</details>
+
+
 <br>
 
 # Usando o Console:
@@ -175,11 +232,11 @@ A omissão da operação resultará em um erro como o seguinte:
 
 * Escrever uma estrutura não-balanceada de indicadores resultará em um erro como o seguinte:
 
-        Quantia indevida de indicadores --> "show `b", linha 2
+        Erro : Quantia indevida de indicadores. --> "show `a", linha 2
 
 * A omissão de argumentos resultará em um erro como o seguinte:
 
-        Comando show sem argumentos. --> "show", linha 1
+        Erro : Comando show sem argumentos. --> "show", linha 1
 </details>
 
 
