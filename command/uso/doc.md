@@ -9,7 +9,7 @@
 * Operadores unários: 
         
         ! : 7 : Not lógico   : !0 = 1
-        - : 7 : Menos unário : -1 = -1
+        - : 7 : Negação      : -1 = 1 * -1
 
 * Operadores binários:
 
@@ -55,17 +55,34 @@
 <details>
 <summary>Erros</summary>
 
-* Quando uma expressão entre dois tipos diferentes é executada (e.x.: abc + 2), um erro como o seguinte surge:
+* Quando uma operação é realizada entre dois tipos diferentes sem ter suporte, um erro como o seguinte aparece:
 
-        Erro : Operação com dois tipos diferentes. --> "set a abc + 2", linha 1
+        Erro : Operação proibida com tipos diferentes. --> "set a 35 + alpha", linha 1
 
-* Quando uma operação é mal-escrita (e.x.: +-3), um erro como o seguinte surge:
+* Quando uma operador é usado da forma incorreta, um erro como o seguinte aparece:
 
-        Erro : Operação matemática malformada. --> "set a +-3", linha 1
+        Erro : Operador mal-usado. --> "set a -sigma", linha 1
 
-* Quando uma operação de lógica binária é executada com texto ( abc & bcd ), um erro como o seguinte surge:
+* Quando se tenta negar um valor não inteiro, um erro como o seguinte aparece:
 
-        Erro : Logica binária com valor não numérico --> "set a abc & abc", linha 1
+        Erro : Negação de não-inteiro --> "set a !10.5", linha 1
+
+* Quando se tenta dividir por 0, um erro como o seguinte aparece:
+
+        Erro : Divisão por zero. --> "set a 10 / 0", linha 1
+
+* Quando se tenta obter o modulo 0, um erro como o seguinte aparece:
+        
+        Erro : Modulo com zero. --> "set a 10 % 0", linha 1
+
+* Quando se tenta usar o comparador de textos com números, um erro como o seguinte aparece:
+
+        Erro : Comparador de texto com tipo numérico --> "set a 10 $ 20", linha 1
+
+* Quando se escreve uma operação incorreta, um erro como o seguinte aparece:
+
+        Erro : Operação malformada --> "set a --2", linha 1
+
 
 </details>
 

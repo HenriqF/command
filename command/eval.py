@@ -1,9 +1,95 @@
 from nos import Erro
 
+class Operacao:
+    def __init__(self, operador, es, di, askNode):
+        self.operador = operador
+        self.es = es
+        self.di = di
+        self.askNode = askNode
+
+    def operate(self):
+        esquerda = self.es
+        direita = self.di
+        if isinstance(self.es, Operacao):
+            esquerda = self.es.operate()
+        if isinstance(self.di, Operacao):
+            direita = self.di.operate()
+
+        if esquerda is not None:
+            if isinstance(esquerda, (int, float)) != isinstance(direita, (int, float)):
+                if not(isinstance(esquerda,(str)) and isinstance(direita, (int,float)) and self.operador == "*"):
+                    Erro(linha=self.askNode.linha, tipo="Operação proibida com tipos diferentes.")
+
+        if isinstance(esquerda, (str)) and ((self.operador not in {"+","*","$",">","<"}) or (isinstance(direita, (str)) and self.operador == "*")):
+            Erro(linha=self.askNode.linha, tipo="Operador mal-usado.")
+
+        match self.operador:
+            #Operadores unários
+            case "u-":
+                return(direita * -1)
+            case "!":
+                if direita == 1:
+                    return(0.0)
+                if direita == 0:
+                    return(1.0)
+                if isinstance(direita, (str, float)):
+                    Erro(linha=self.askNode.linha, tipo="Negação de não-inteiro")
+                return(~ direita)
+            
+            #Logica binária
+            case "&":
+                esquerda = int(esquerda)
+                direita = int(direita)
+                return(float(esquerda&direita))
+            case "|":
+                esquerda = int(esquerda)
+                direita = int(direita)
+                return(float(esquerda|direita))
+
+            #Operadores binários
+            case "~":
+                if isinstance(esquerda, (float,int)):
+                    esquerda = int(esquerda)
+                    return(round(direita, esquerda))
+            case "^":
+                return(esquerda**direita)
+            case "+":
+                return(esquerda + direita)
+            case "-":
+                return(esquerda - direita)
+            case "*":
+                return(esquerda * direita)
+            case "/":
+                if direita == 0:
+                    Erro(linha=self.askNode.linha, tipo="Divisão por zero.")
+                return(esquerda / direita)
+            case "%":
+                if direita == 0:
+                    Erro(linha=self.askNode.linha, tipo="Modulo com zero.")
+                return(esquerda%direita)
+
+            #Comparadores
+            case ">":
+                if isinstance(esquerda, (float,int)):
+                    return(1.0 if esquerda >= direita else 0.0)
+                if isinstance(esquerda, str):
+                    return(1.0 if len(esquerda) >= len(direita) else 0.0)
+            case "<":
+                if isinstance(esquerda, (float,int)):
+                    return(1.0 if esquerda <= direita else 0.0)
+                if isinstance(esquerda, str):
+                    return(1.0 if len(esquerda) <= len(direita) else 0.0)
+            case "$":
+                if isinstance(esquerda, str):
+                    return(1.0 if esquerda == direita else 0.0)
+                else:
+                    Erro(linha=self.askNode.linha, tipo="Comparador de texto com tipo numérico")
+
 class Eval:
     def __init__(self,variaveis, askNode):
         self.variaveis = variaveis
         self.askNode = askNode
+
         self.ordem = {"~":0, #aproximacao ( 1~10.07 arredonde 10.07 para a primeira casa : 10.1)
                       "|":1, #ou
                       "&":2, #ands
@@ -11,167 +97,81 @@ class Eval:
                       "+":4,"-":4,
                       "*":5,"/":5,"%":5,
                       "^":6,
+                      "!":7,"u-":7
                       }
-        self.unario = {"!","-"}
+        self.binario = {"~","|","&",">","<","$","+","-","*","/","%","^"}
+        self.unario = {"!","u-"}
 
     def getValor(self,token):
         valor = self.variaveis[token].valor
         while isinstance(valor, str) and valor in self.variaveis:
             valor = self.variaveis[valor].valor
-        return valor  #adicionar self.evaluate(valor) para recursao, (tal caso, adicionar err hand para ref ciclica a=b b=a...)
+        return valor 
 
     def evaluate(self, tokens):
-        def revPolNot(tokens): #tambem calcula operadores unarios
-            if len(tokens) == 0 and (tokens[0] in self.ordem or tokens[0] in self.unario):
-                Erro(linha=self.askNode.linha, tipo="Operação matemática malformada.")
-
-            result = []
-            stackOrdem = []
-            i = 0
-            while i < len(tokens):
-                if tokens[i] in self.variaveis:
-                    tokens[i] = self.variaveis[tokens[i]].valor
-                i += 1
+        def transform(tokens):
             i = 0
             while i < len(tokens):
                 token = tokens[i]
-                prevToken = None
-                futureToken = None
+                lastchar = None
                 if i-1 >= 0:
-                    prevToken = tokens[i-1]
-                if i+1 < len(tokens):
-                    futureToken = tokens[i+1]
+                    lastchar = tokens[i-1]
 
-                if (token in self.unario) and (prevToken is None or prevToken in self.ordem or prevToken in {"(",")"}) and (futureToken not in self.ordem) and (futureToken not in self.unario and futureToken):
-                    if futureToken in self.variaveis:
-                        valor = self.variaveis[futureToken].valor
-                        if isinstance(valor, int):
-                            valor = float(valor)
-                        futureToken = valor
-                    match token:
-                        case "-":
-                            if isinstance(futureToken, (int, float)):
-                                tokens[i] = futureToken * -1
-                                tokens.pop(i+1)
-                                i-=2
-                            else:
-                                Erro(linha=self.askNode.linha, tipo="Operação matemática malformada")
-                        case "!":
-                            if isinstance(futureToken, (int, float)):
-                                if futureToken == 1:
-                                    tokens[i] = 0
-                                elif futureToken == 0:
-                                    tokens[i] = 1
-                                else:
-                                    tokens[i] = ~futureToken
-                                tokens.pop(i+1)
-                                i-=2
-                            else:
-                                Erro(linha=self.askNode.linha, tipo="Operação matemática malformada")
+                if tokens[i] in self.variaveis:
+                    tokens[i] = self.getValor(tokens[i])
+                elif token == "-" and ((lastchar in self.ordem or lastchar in {"(",")"}) or (lastchar == None)):
+                    tokens[i] = "u-"
+                i+=1
+            return(tokens)
 
-
-                i += 1
-                
-            for i in range(len(tokens)):
-                token = tokens[i]
-                #print(self.variaveis, token)
-                if not isinstance(token, str):
-                    if isinstance(token, int):
-                        token = float(token)
-                    result.append(token)
+        def revPolNot(tokens):
+            final = []
+            stacksinal = []
+            for token in tokens: #poe em ordem reversa polonesa
+                if isinstance(token, (float, int)):
+                    final.append(token)
                 elif token in self.ordem:
-                    while stackOrdem and stackOrdem[-1] in self.ordem and self.ordem[stackOrdem[-1]] >= self.ordem[token]:
-                        result.append(stackOrdem.pop())
-                    stackOrdem.append(token)
+                    while stacksinal and (stacksinal[-1] not in "()") and (self.ordem[stacksinal[-1]] >= self.ordem[token]):
+                        final.append(stacksinal.pop())
+                    stacksinal.append(token)
                 elif token == "(":
-                    stackOrdem.append(token)
+                    stacksinal.append("(")
                 elif token == ")":
-                    while stackOrdem[-1] != "(":
-                        result.append(stackOrdem.pop())
-                    stackOrdem.pop()
+                    while stacksinal and stacksinal[-1] != "(":
+                        final.append(stacksinal.pop())
+                    stacksinal.pop()
                 else:
-                    result.append(token)
-            while stackOrdem:
-                result.append(stackOrdem.pop())
-            return result
-        
-        def getResult(tokens):
-            tokens = revPolNot(tokens)
+                    final.append(token)
+            while stacksinal:
+                final.append(stacksinal.pop())
+            return(final)
 
-            stack = []
-            for token in tokens:
-                if token in self.ordem:
-                    if len(stack) < 2:
-                        Erro(linha=self.askNode.linha, tipo="Operação matemática malformada.")
-                    b = stack.pop()
-                    a = stack.pop()
+        def createOPAST(tokens):
+            tokens = revPolNot(transform(tokens))
 
-                    if type(a) != type(b):
-                        Erro(linha=self.askNode.linha, tipo="Operação com dois tipos diferentes.")
-
-                    match token:
-                        #Logica binaria
-                        case "&":
-                            if isinstance(a, (int, float)):
-                                a = int(a)
-                                b = int(b)
-                            else:
-                                Erro(linha=self.askNode.linha, tipo="Logica binária com valor não numérico")
-
-                            stack.append(float(a&b))
-                        case "|":
-                            if isinstance(a, (int, float)):
-                                a = int(a)
-                                b = int(b)
-                            else:
-                                Erro(linha=self.askNode.linha, tipo="Logica binária com valor não numérico")
-
-                            stack.append(float(a|b))
-
-                        #Comparacao
-                        case ">":
-                            if isinstance(a, (float,int)):
-                                stack.append(1.0 if a >= b else 0.0)
-                            if isinstance(a, str):
-                                stack.append(1.0 if len(a) >= len(b) else 0.0)
-                        case "<":
-                            if isinstance(a, (float,int)):
-                                stack.append(1.0 if a <= b else 0.0)
-                            if isinstance(a, str):
-                                stack.append(1.0 if len(a) <= len(b) else 0.0)
-                            pass
-                        case "$":
-                            if isinstance(a, str):
-                                stack.append(1.0 if a == b else 0.0)
-                        #Operacao
-
-                        case "~":
-                            if isinstance(a, (float,int)):
-                                a = int(a)
-                                stack.append(round(b, a))
-                        case "^":
-                            stack.append(a**b)
-                        case "+":
-                            stack.append(a+b)
-                        case "-":
-                            stack.append(a-b)
-                        case "*":
-                            stack.append(a*b)
-                        case "/":
-                            stack.append(a/b)
-                        case "%":
-                            stack.append(a%b)
-                    
+            resultado = [] #AST root
+            for token in tokens: #Cria a AST
+                if token in self.binario:
+                    if len(resultado) < 2:
+                        Erro(linha=self.askNode.linha, tipo="Operação malformada")
+                    b = resultado.pop()
+                    a = resultado.pop()
+                    resultado.append(Operacao(operador=token, es=a, di=b, askNode=self.askNode))
+                elif token in self.unario:
+                    if len(resultado) < 1:
+                        Erro(linha=self.askNode.linha, tipo="Operação malformada")
+                    b = resultado.pop()
+                    resultado.append(Operacao(operador=token, es=None, di=b, askNode=self.askNode))
                 else:
-                    stack.append(token)
+                    resultado.append(token)
 
-            if len(stack) > 1:
-                Erro(linha=self.askNode.linha, tipo="Operação matemática malformada.")
-            if not stack:
-                Erro(linha=self.askNode.linha, tipo="Operação não presente.")
-            return stack[0]
+            return(resultado[0])
+
+        opAST = createOPAST(tokens)
+        result = opAST
+        if isinstance(opAST, Operacao):
+            result = opAST.operate()
         
-        result = getResult(tokens)
-        if type(result) != str and int(result) == result:
-            result = int(result)
+        if isinstance(result, float) and int(result) == float(result):
+            return(int(result))
         return(result)
