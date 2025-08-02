@@ -3,6 +3,9 @@ from nos import *
 from eval import *
 import time as Time
 
+
+sys.set_int_max_str_digits(2147483647)
+
 class Parser:
     def __init__(self,varnodes, nodes, variaveis, indexNodes):
         self.varnodes = varnodes
@@ -25,37 +28,41 @@ class Parser:
                     tokens = [x for x in tokens if x != " "] 
                     if 1 >= len(tokens):
                         Erro(linha=[linha, i+1], tipo="Loop sem argumento.")
-                    self.nodes.append(WhileLoop(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
-
+                    whileNode = (WhileLoop(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
+                    whileNode.pergunta = Eval(variaveis=self.variaveis, askNode=whileNode).createOperationAst(whileNode.pergunta)
+                    self.nodes.append(whileNode)
 
                 case "if":
                     tokens = [x for x in tokens if x != " "] 
                     if 1 >= len(tokens):
                         Erro(linha=[linha, i+1], tipo="Condicional sem argumento.")
-                    self.nodes.append(ConditionalIf(pergunta=tokens[1:],corpo=None ,fim=None, depth=depth, linha=[linha, i+1]))
+                    ifNode = (ConditionalIf(pergunta=tokens[1:],corpo=None ,fim=None, depth=depth, linha=[linha, i+1]))
+                    ifNode.pergunta = Eval(variaveis=self.variaveis, askNode=ifNode).createOperationAst(ifNode.pergunta)
+                    self.nodes.append(ifNode)
 
                 case "elif":
                     tokens = [x for x in tokens if x != " "]
                     if 1 >= len(tokens):
                         Erro(linha=[linha, i+1], tipo="Condicional sem argumento.")
-                    self.nodes.append(ConditionalElse(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
+                    elifNode = ConditionalElse(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1])
+                    elifNode.pergunta = Eval(variaveis=self.variaveis, askNode=elifNode).createOperationAst(elifNode.pergunta)
+                    self.nodes.append(elifNode)
 
                 case "else":
                     self.nodes.append(Else(corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
 
-
-
                 case "set":
                     tokens = [x for x in tokens if x != " "]
-
                     if 1 >= len(tokens):
                         Erro(linha=[linha, i+1], tipo="Comando set sem nome")
-                    elif any(not char.isalpha() and char != "_" for char in tokens[1]):
+                    elif any(not char.isalpha() for char in tokens[1]):
                         Erro(linha=[linha, i+1], tipo="Caractere proibido no nome da variavel.")
                     elif 2 >= len(tokens):
                         Erro(linha=[linha, i+1], tipo="Comando set sem operação.")
 
-                    self.nodes.append(Setter(setwho=tokens[1], setto=tokens[2:], depth=depth, linha=[linha, i+1]))
+                    setNode = (Setter(setwho=tokens[1], setto=tokens[2:], depth=depth, linha=[linha, i+1]))
+                    setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
+                    self.nodes.append(setNode)
 
                     if tokens[1] not in self.variaveis:
                         self.varnodes.append(Variavel(nome=tokens[1], valor=None, linha=[linha, i+1]))
@@ -180,15 +187,14 @@ def execute(nodes, variaveis, nodesIndex):
             lastConditionalResult[node.depth] = 1
 
         match node:
-            
             case WhileLoop():
-                sucessoCondicional = Eval(variaveis=variaveis, askNode=node).evaluate(node.pergunta)
+                sucessoCondicional = Eval(variaveis=variaveis, askNode=node).executeAst(operationAst=node.pergunta, variaveis=variaveis)
                 lastConditionalResult[node.depth] = sucessoCondicional
                 if sucessoCondicional != 1:
                     i = nodesIndex[node.fim]
 
             case Setter():
-                variaveis[node.setwho].valor = Eval(variaveis=variaveis, askNode=node).evaluate(node.setto)
+                variaveis[node.setwho].valor = Eval(variaveis=variaveis, askNode=node).executeAst(operationAst=node.setto, variaveis=variaveis)
 
             case Show():
                 node.show(variaveis)
@@ -197,7 +203,7 @@ def execute(nodes, variaveis, nodesIndex):
                 variaveis[node.setwho].valor = node.get()
 
             case ConditionalIf():
-                sucessoCondicional = Eval(variaveis=variaveis, askNode=node).evaluate(node.pergunta)
+                sucessoCondicional = Eval(variaveis=variaveis, askNode=node).executeAst(operationAst=node.pergunta, variaveis=variaveis)
                 lastConditionalResult[node.depth] = sucessoCondicional
                 if sucessoCondicional == 1:
                     i = nodesIndex[node.corpo]-1
@@ -206,7 +212,7 @@ def execute(nodes, variaveis, nodesIndex):
 
             case ConditionalElse():
                 if lastConditionalResult[node.depth] != 1:
-                    sucessoCondicional = Eval(variaveis=variaveis, askNode=node).evaluate(node.pergunta)
+                    sucessoCondicional = Eval(variaveis=variaveis, askNode=node).executeAst(operationAst=node.pergunta, variaveis=variaveis)
                     lastConditionalResult[node.depth] = sucessoCondicional
                     if sucessoCondicional == 1:
                         i = nodesIndex[node.corpo]-1
@@ -221,7 +227,6 @@ def execute(nodes, variaveis, nodesIndex):
                     i = nodesIndex[node.corpo]-1
                 else:
                     i = nodesIndex[node.fim]
-
 
             case EndLoop():
                 i = nodesIndex[node.loopPai]-1

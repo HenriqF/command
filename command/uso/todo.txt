@@ -1,3 +1,16 @@
-ast
 
-consertar urinirarios 
+
+
+comando "apply"
+SET A PORRALOCA
+APLY LENGTH A
+SHOW PORRALOCA
+
+
+
+CONSERTAR>
+NOME DE VARIAVEIS
+SHOW (VARIAVEL COM UNDERSCORE)... 
+add doc ERR Comando desconhecido.
+
+

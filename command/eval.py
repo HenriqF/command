@@ -6,14 +6,26 @@ class Operacao:
         self.es = es
         self.di = di
         self.askNode = askNode
+        
+    def getValor(self,token,variaveis):
+        valor = variaveis[token].valor
+        while isinstance(valor, str) and valor in variaveis:
+            valor = variaveis[valor].valor
+        return valor 
 
-    def operate(self):
+    def operate(self, variaveis):
         esquerda = self.es
         direita = self.di
+        if esquerda in variaveis:
+            esquerda = self.getValor(esquerda, variaveis)
+        if self.di in variaveis:
+            direita = self.getValor(direita, variaveis)
+
+
         if isinstance(self.es, Operacao):
-            esquerda = self.es.operate()
+            esquerda = self.es.operate(variaveis)
         if isinstance(self.di, Operacao):
-            direita = self.di.operate()
+            direita = self.di.operate(variaveis)
 
         if esquerda is not None:
             if isinstance(esquerda, (int, float)) != isinstance(direita, (int, float)):
@@ -102,13 +114,7 @@ class Eval:
         self.binario = {"~","|","&",">","<","=","+","-","*","/","%","^"}
         self.unario = {"!","u-"}
 
-    def getValor(self,token):
-        valor = self.variaveis[token].valor
-        while isinstance(valor, str) and valor in self.variaveis:
-            valor = self.variaveis[valor].valor
-        return valor 
-
-    def evaluate(self, operation):
+    def createOperationAst(self, operation):
         tokens = operation[:]
         def transform(tokens):
             i = 0
@@ -119,7 +125,10 @@ class Eval:
                     lastchar = tokens[i-1]
 
                 if tokens[i] in self.variaveis:
-                    tokens[i] = self.getValor(tokens[i])
+                    #tokens[i] = self.getValor(tokens[i])
+                    pass
+
+
                 elif token == "-" and ((lastchar in self.ordem or lastchar in {"(",")"}) or (lastchar == None)):
                     tokens[i] = "u-"
                 i+=1
@@ -150,7 +159,7 @@ class Eval:
                 final.append(stacksinal.pop())
             return(final)
 
-        def createOPAST(tokens):
+        def createAST(tokens):
             tokens = revPolNot(transform(tokens))
 
             resultado = [] #AST root
@@ -171,11 +180,15 @@ class Eval:
 
             return(resultado[0])
 
-        opAST = createOPAST(tokens)
+        opAST = createAST(tokens)
         result = opAST
-        if isinstance(opAST, Operacao):
-            result = opAST.operate()
-        
-        if isinstance(result, float) and int(result) == float(result):
-            return(int(result))
         return(result)
+    
+    def executeAst(self, operationAst, variaveis):
+        if isinstance(operationAst, Operacao):
+            resultado = operationAst.operate(variaveis)
+        else:
+            resultado = operationAst
+        if isinstance(resultado, float) and int(resultado) == float(resultado):
+            return(int(resultado))
+        return(resultado)
