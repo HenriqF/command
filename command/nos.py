@@ -74,7 +74,14 @@ class Get:
         except:
             pass
         return(got)
-
+class Exit:
+    def __init__(self, depth, linha):
+        self.depth = depth
+        self.linha = linha
+class Nothing:
+    def __init__(self, depth, linha):
+        self.depth = depth
+        self.linha = linha
 
 #Loops
 class WhileLoop(Loop):

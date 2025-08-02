@@ -118,23 +118,18 @@
 
 <br>
 
-* "NOME" deve conter apenas letras (maiúsculas ou minúsculas) ou underlines.<br>
+* "NOME" deve conter apenas letras (maiúsculas ou minúsculas).<br>
 * "VALOR" é uma [OPERAÇÃO](#operações)
 <details>
 <summary>Erros</summary>
 
-* Se o nome de uma variável fugir dos padrões de nomenclatura, um erro como o seguinte aparecerá:
+* Se um número for encontrado no nome de uma variável, um erro como o seguinte aparecerá:
 
-        Erro : Caractere proibido no nome da variavel. --> "set variavel12 10", linha 1
+        Erro : Numero em nome de variável. --> "set numero0 0", linha 1
 
-    A omissão do nome resultará em um erro como o seguinte:
+* Quando um comando set é usado sem seguir a estrutura padrão, um erro como o seguinte aparece:
 
-        Erro : Comando set sem nome --> "set ", linha 1
-
-* "VALOR" deve ser uma [Operação](#operações).<br>
-A omissão da operação resultará em um erro como o seguinte:
-
-        Erro : Comando set sem operação. --> "set variavel", linha 1
+        Erro : Comando set com operação malformada. --> "set numero", linha 1
 
 </details>
 </details>
@@ -144,7 +139,7 @@ A omissão da operação resultará em um erro como o seguinte:
 # Condicionais
 
 <details>
-<summary>Comando <b> IF </b></summary>
+<summary>Comando <b> if </b></summary>
 
 
 * Esse comando segue a seguinte estrutura: 
@@ -158,7 +153,7 @@ A omissão da operação resultará em um erro como o seguinte:
 
 
 <details>
-<summary>Comando <b> ELIF </b></summary>
+<summary>Comando <b> elif </b></summary>
 
 * Esse comando segue a seguinte estrutura: 
 
@@ -189,7 +184,7 @@ A omissão da operação resultará em um erro como o seguinte:
 
 
 <details>
-<summary>Comando <b> ELSE </b></summary>
+<summary>Comando <b> else </b></summary>
 
 * Esse comando segue a seguinte estrutura: 
 
@@ -209,12 +204,12 @@ A omissão da operação resultará em um erro como o seguinte:
         set a 5
         while a > 0
             set a a-1
-        elif a = -1
+        elif a = 0
             show Agora, `a` e nulo!
 
         SAÍDA:
 
-        Agora, a e negativo!
+        Agora, a e nulo!
 
 </details>
 
@@ -227,7 +222,7 @@ A omissão da operação resultará em um erro como o seguinte:
 
 * Caso seja criada uma condicional sem corpo (código identado), um erro como o seguinte aparecerá:
 
-        Erro : Condicional sem corpo --> "if 10", linha 1
+        Erro : Comando sem corpo --> "if 10", linha 1
 
 
 
@@ -238,7 +233,7 @@ A omissão da operação resultará em um erro como o seguinte:
 
 # Loops
 <details>
-<summary> Comando <b> WHILE </b> </summary>
+<summary> Comando <b> while </b> </summary>
 
 * Um loop, ou ciclo, é uma estrutura que repete uma porção de código.
 * Para criar um loop, usa-se a seguinte estrutura:
@@ -249,6 +244,19 @@ A omissão da operação resultará em um erro como o seguinte:
 * Enquanto o valor da [OPERAÇÃO](#operações) for igual a 1, o código identado será executado.
 * Após cada execução, a operação é reavaliada. Se por ventura deixar de valer 1, o ciclo é quebrado e o programa segue.
 
+<details>
+<summary>Erros</summary>
+
+* Quando é usado esse comando sem uma operação, um erro como o seguinte aparece:
+
+        Erro : Loop sem argumento. --> "while ", linha 1
+
+* Caso seja criado um while sem corpo (código identado), um erro como o seguinte aparecerá:
+
+        Erro : Comando sem corpo --> "while 1 ", linha 1
+
+</details>
+
 </details>
 
 
@@ -257,7 +265,7 @@ A omissão da operação resultará em um erro como o seguinte:
 
 # Usando o Console:
 <details>
-<summary>Comando <b> SHOW </b></summary>
+<summary>Comando <b> show </b></summary>
 
 * Para jogar dados no console, utiliza-se a seguinte estrutura:
 
@@ -301,31 +309,42 @@ A omissão da operação resultará em um erro como o seguinte:
 
 
 <details>
-<summary>Comando <b> GET </b></summary>
+<summary>Comando <b> get </b></summary>
 
 * Para jogar dados no console, utiliza-se a seguinte estrutura:
 
         get VARIAVEL ARGUMENTOS
 
-* VARIAVEL deve ser o nome de uma variavel já declarada
+* VARIAVEL deve ser o nome de uma variável já declarada
 * ARGUMENTOS é um trecho opicional, um texto que aparece no console quando o comando é executado.
 
 <details>
 <summary>Erros</summary>
 
-* Tentar usar o comando get com uma variavel não declarada resulta em um erro como o seguinte:
+* Tentar usar o comando get com uma variável não declarada resulta em um erro como o seguinte:
 
-        Erro : Comando get em variavel não declarada. --> "get var", linha 1
+        Erro : Comando get em variável não declarada. --> "get var", linha 1
 
-* Tentar usar o comando get sem nomear uma variavel resulta em um erro como o seguinte:
+* Tentar usar o comando get sem nomear uma variável resulta em um erro como o seguinte:
 
-        Erro : Comando get sem variavel. --> "get", linha 1
+        Erro : Comando get sem variável. --> "get", linha 1
 
-* Não separar a variavel do argumento resulta em um erro como o seguinte:
+* Não separar a variável do argumento resulta em um erro como o seguinte:
 
         Erro : Comando get com argumentos misturados. --> "get var-->", linha 2
 
 </details>
+</details>
+<br>
 
+# Miscelâneos:
 
+* Comando <b>exit</b>    : Serve para terminar a execução do script;
+* Comando <b>nothing</b> : Serve principalmente para testes. Não faz nada.
+
+<details>
+<summary> Erros </summary>
+* Quando é usado um comando desconhecido, um erro como o seguinte aparece:
+
+        Erro : Comando desconhecido. --> "comandoincrivel = 20", linha 1
 </details>

@@ -1,16 +1,11 @@
+funcoes 
+    comando "function"
+    comando "return"
+    comando "apply"
+    apply length() a
+    comando "execute"
+    execute die()
 
+porralo ca e etcetera...
 
-
-comando "apply"
-SET A PORRALOCA
-APLY LENGTH A
-SHOW PORRALOCA
-
-
-
-CONSERTAR>
-NOME DE VARIAVEIS
-SHOW (VARIAVEL COM UNDERSCORE)... 
-add doc ERR Comando desconhecido.
-
-
+lista, hash..

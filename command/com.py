@@ -52,21 +52,24 @@ class Parser:
                     self.nodes.append(Else(corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
 
                 case "set":
-                    tokens = [x for x in tokens if x != " "]
-                    if 1 >= len(tokens):
-                        Erro(linha=[linha, i+1], tipo="Comando set sem nome")
-                    elif any(not char.isalpha() for char in tokens[1]):
-                        Erro(linha=[linha, i+1], tipo="Caractere proibido no nome da variavel.")
-                    elif 2 >= len(tokens):
-                        Erro(linha=[linha, i+1], tipo="Comando set sem operação.")
+                    tokens = tokens[2:]
+                    if 3 > len(tokens) or tokens[1] != " ":
+                        Erro(linha=[linha, i+1], tipo="Comando set com operação malformada.")
 
-                    setNode = (Setter(setwho=tokens[1], setto=tokens[2:], depth=depth, linha=[linha, i+1]))
+                    varNome = tokens[0]
+                    varValor = [x for x in tokens[2:] if x != " "]
+
+                    if any(not char.isalpha() for char in varNome):
+                        Erro(linha=[linha, i+1], tipo="Numero em nome de variável.")
+
+                    setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
                     setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
                     self.nodes.append(setNode)
 
                     if tokens[1] not in self.variaveis:
-                        self.varnodes.append(Variavel(nome=tokens[1], valor=None, linha=[linha, i+1]))
-                        self.variaveis[tokens[1]] = self.varnodes[-1]
+                        varNode = Variavel(nome=varNome, valor=None, linha=[linha, i+1])
+                        self.varnodes.append(varNode)
+                        self.variaveis[varNome] = varNode
 
                 case "show":
                     if " " in tokens:
@@ -82,7 +85,7 @@ class Parser:
                         tokens.remove(" ")
                     tokens = tokens[1:]
                     if 0 >= len(tokens):
-                        Erro(linha=[linha, i+1], tipo="Comando get sem variavel.")
+                        Erro(linha=[linha, i+1], tipo="Comando get sem variável.")
                     variavelNome = tokens[0]
                     conteudo = None
                     if len(tokens) > 1 and tokens[1] == " ":
@@ -91,9 +94,15 @@ class Parser:
                         Erro(linha=[linha, i+1], tipo="Comando get com argumentos misturados.")
 
                     if variavelNome not in self.variaveis:
-                        Erro(linha=[linha, i+1], tipo="Comando get em variavel não declarada.")
+                        Erro(linha=[linha, i+1], tipo="Comando get em variável não declarada.")
 
                     self.nodes.append(Get(content=conteudo, setwho=variavelNome, depth=depth, linha=[linha, i+1]))
+
+                case "nothing":
+                    self.nodes.append(Nothing(depth=depth, linha=[linha, i+1]))
+
+                case "exit":
+                    self.nodes.append(Exit(depth=depth, linha=[linha, i+1]))
 
                 case "#":
                     pass
@@ -227,6 +236,10 @@ def execute(nodes, variaveis, nodesIndex):
                     i = nodesIndex[node.corpo]-1
                 else:
                     i = nodesIndex[node.fim]
+
+
+            case Exit():
+                return
 
             case EndLoop():
                 i = nodesIndex[node.loopPai]-1

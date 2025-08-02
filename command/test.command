@@ -12,5 +12,5 @@ while numero > 0
 
 if (numero % 2) = 0
     show Pronto! numeroA
-else
-    show Pronto! numeroB
+    exit
+show Pronto! numeroB
