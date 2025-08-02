@@ -344,7 +344,9 @@
 
 <details>
 <summary> Erros </summary>
+        
 * Quando é usado um comando desconhecido, um erro como o seguinte aparece:
 
         Erro : Comando desconhecido. --> "comandoincrivel = 20", linha 1
+
 </details>
