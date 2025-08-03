@@ -1,10 +1,17 @@
-set variavel 0
+set result 0
 
-function a
-    set valor 20
-    result valor
+function porraloca
+    set a 0
+    while a < 100
+        set a a + 1
 
-execute a
-nothing
-apply variavel
+    while a > 95
+        show wow! a
+        set a a-1
+        
 
+    result a
+
+execute porraloca
+apply result
+show `result`: result
