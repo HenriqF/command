@@ -89,8 +89,9 @@ class Nothing:
 
 #Funcoes
 class Function(TemCorpo):
-    def __init__(self, nome, corpo, fim, environment, caller, depth, linha):
+    def __init__(self, nome, argumentos, corpo, fim, environment, caller, depth, linha):
         self.nome = nome
+        self.argumentos = argumentos
         self.corpo = corpo
         self.fim = fim
         self.environment = environment
@@ -99,16 +100,17 @@ class Function(TemCorpo):
         self.linha = linha
 
 class Result:
-    def __init__(self, varRetorno, valor, funcaoPai, depth, linha):
-        self.varRetorno = varRetorno
+    def __init__(self, retorno, valor, funcaoPai, depth, linha):
+        self.retorno = retorno
         self.valor = valor
         self.funcaoPai = funcaoPai
         self.depth = depth
         self.linha = linha
 
 class Execute:
-    def __init__(self, execWho, valor, depth, linha):
+    def __init__(self, execWho, argumentos, valor, depth, linha):
         self.execWho = execWho
+        self.argumentos = argumentos
         self.valor = valor
         self.depth = depth
         self.linha = linha

@@ -1,17 +1,52 @@
-set result 0
+function fib n
+    if n = 0
+        result 0
+    if n = 1
+        result 1
+    else
+        set na n-1
+        execute fib na
+        apply na
 
-function porraloca
-    set a 0
-    while a < 100
-        set a a + 1
+        set nb n-2
+        execute fib nb
+        apply nb
 
-    while a > 95
-        show wow! a
-        set a a-1
-        
+        result nb+na
 
-    result a
+function iterfib n
+    set na 0
+    set nb 1
+    set numero n
+    while n > 0
+        if (n % 2) = 0
+            set na na+nb
+        else
+            set nb na+nb
+        set n n-1
 
-execute porraloca
-apply result
-show `result`: result
+    if (numero%2) = 0
+        result na
+    else
+        result nb
+
+while 1
+    set escolha 0
+    get escolha Iterativo ou Recursivo (i/r/s(para sair))? -->
+    if escolha = i
+        set n 0
+        get n Posicao -->
+        execute iterfib n
+        apply n
+        show n
+    elif escolha = r
+        set n 0
+        get n Posicao -->
+        execute fib n
+        apply n
+        show n
+    elif escolha = s
+        show igma
+        exit
+    else
+        show `escolha` errada. puta

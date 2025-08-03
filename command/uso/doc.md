@@ -269,20 +269,21 @@
 
 * Usado para definir funções, segue a seguinte estrutura:
 
-        function NOME
-            código
-
-* Há também um subcomando: <b>result</b>. Ele é utilizado para declarar que a função terminou de executar:
-
-        function Nome
+        function NOME VARIAVEIS
             código
             result
 
-* Ele também pode ser usado para retornar o valor de uma variável usada dentro da função:
 
-        function Nome
-            set a 10
-            result a
+  Nele, "NOME" é o identificador da função. "VARIAVEIS" são os valores de entrada. Segue um exemplo de uso:
+
+        f(x) = x+1
+
+        function incremento x
+            result x + 1
+
+* O subcomando <b>result</b> é opicional e finaliza a função. Pode também retornar uma [operação](#operações) (como visto acima), que será enviada ao comando chamador.
+
+  
 
 <details>
 <summary>Erros </summary>
@@ -299,17 +300,19 @@
 
         Erro : Uma função com tal nome já existe. --> "function a", linha 3
 
+* Quando se tenta criar uma função dentro de outra, um erro como o seguinte aparece:
+
+        Erro : Funcao dentro de funcao. --> "    function b", linha 2
+
 * Quando é dado mais de um argumento ao comando result, um erro como o seguinte aparece:
 
         Erro : Argumentos em demasia. --> "    result a b", linha 2
+        
 
 * Quando um result é usado fora de função, um erro como o seguinte aparece:
 
         Erro : Result sem função. --> "result", linha 1
 
-* Quando um result tenta usar uma variável não declarada, um erro como o seguinte aparece:
-
-        Erro : Result de variável não declarada --> "    result a", linha 2
 </details>
 <br>
 </details>
@@ -321,7 +324,14 @@
 
 * Usado para executar uma função, segue a seguinte estrutura:
 
-        execute NOMEFUNCAO
+        execute NOMEFUNCAO VARIAVEIS
+
+* VARIAVEIS são os valores de entrada solicitados pela função chamada:
+
+        function soma x y
+            result x + y
+
+        execute soma 10 20            
 
 <details>
 <summary>Erros </summary>
@@ -333,6 +343,10 @@
 * Quando se tenta executar uma função que não existe, um erro como o seguinte aparece:
 
         Erro : Funcao inexistente. --> "execute a", linha 1
+
+* Quando a quantia de valores de entrada não condiz com a quantia solicitada pela função chamada, um erro como o seguinte aparece:
+
+        Erro : Quantia de argumentos indevida. --> "execute fib 10", linha 4
 </details>
 <br>
 </details>

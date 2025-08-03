@@ -16,134 +16,158 @@ class Parser:
         self.indexNodes = indexNodes
 
     def parse(self, code):
-        linhas = [x for x in code.split("\n") if x.strip() != ""]
+        #linhas = [x for x in code.split("\n") if x.strip() != ""]
+        linhas = [x for x in code.split("\n")]
 
         for i, linha in enumerate(linhas):
-            tokens = self.getTokens(linha)
-            if not tokens:
-                continue
+            if linha != "":
+                tokens = self.getTokens(linha)
+                if not tokens:
+                    continue
 
-            depth = tokens.pop(0)
+                depth = tokens.pop(0)
 
-            match tokens[0]:
-                case "function":
-                    tokens = [x for x in tokens if x != " "][1:]
-                    if len(tokens) == 0:
-                        Erro(linha=[linha, i+1], tipo="Funcao sem argumento.")
-                    funcNode = (Function(nome=tokens[0], corpo=None, fim=None, environment=None, caller=None, depth=depth, linha=[linha, i+1]))
-                    if funcNode.nome in self.funcoes:
-                        Erro(linha=[linha, i+1], tipo="Uma função com tal nome já existe.")
-                    self.funcoes[funcNode.nome] = funcNode 
-                    self.nodes.append(funcNode)
-                
-                case "result":
-                    tokens = [x for x in tokens if x != " "][1:]
-                    varRetorno = None
-                    if len(tokens) == 1:
-                        varRetorno = tokens[0]
-                    if len(tokens) > 1:
-                        Erro(linha=[linha, i+1], tipo="Argumentos em demasia.")
+                match tokens[0]:
+                    case "function":
+                        tokens = [x for x in tokens if x != " "][1:]
+
+                        argumentos = None
+                        environment = {}
+
+                        if len(tokens) == 0:
+                            Erro(linha=[linha, i+1], tipo="Funcao sem argumento.")
+                        if len(tokens) > 1:
+                            argumentos = tokens[1:]
+                            for var in argumentos:
+                                if any(not char.isalpha() for char in var):
+                                    Erro(linha=[linha, i+1], tipo="Numero em nome de variável.")
+                                if var not in self.variaveis:
+                                    varNode = Variavel(nome=var, valor=None, linha=[linha, i+1])
+                                    self.varnodes.append(varNode)
+                                    self.variaveis[var] = varNode
+                                if var not in environment:
+                                    environment[var] = varNode
+
+                        funcNode = (Function(nome=tokens[0], argumentos=argumentos, corpo=None, fim=None, environment=environment, caller=[], depth=depth, linha=[linha, i+1]))
+                        if funcNode.nome in self.funcoes:
+                            Erro(linha=[linha, i+1], tipo="Uma função com tal nome já existe.")
+                        self.funcoes[funcNode.nome] = funcNode 
 
 
-                    self.nodes.append(Result(varRetorno=varRetorno, valor=None, funcaoPai=None, depth=depth, linha=[linha, i+1]))
 
-                case "execute":
-                    tokens = [x for x in tokens if x != " "][1:]
-                    if len(tokens) == 0:
-                        Erro(linha=[linha, i+1], tipo="Execute sem nome.")
-                    self.nodes.append(Execute(execWho=tokens[0], valor=None, depth=depth, linha=[linha, i+1]))
+                        
+                        self.nodes.append(funcNode)
+                    
+                    case "result":
+                        tokens = [x for x in tokens if x != " "][1:]
 
-                case "apply":
-                    tokens = [x for x in tokens if x != " "][1:]
-                    if len(tokens) != 1:
-                        Erro(linha=[linha, i+1], tipo="Comando apply com quantia indevida de argumentos.")
-                    self.nodes.append(Apply(variavel=tokens[0], depth=depth, linha=[linha, i+1]))
+                        resultNode = Result(retorno=None, valor=None, funcaoPai=None, depth=depth, linha=[linha, i+1])
+                        if len(tokens) >= 1:
+                            resultNode.retorno = Eval(variaveis=self.variaveis, askNode=resultNode).createOperationAst(tokens)
+                        self.nodes.append(resultNode)
 
-                case "while":
-                    tokens = [x for x in tokens if x != " "] 
-                    if 1 >= len(tokens):
-                        Erro(linha=[linha, i+1], tipo="Loop sem argumento.")
-                    whileNode = (WhileLoop(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
-                    whileNode.pergunta = Eval(variaveis=self.variaveis, askNode=whileNode).createOperationAst(whileNode.pergunta)
-                    self.nodes.append(whileNode)
+                    case "execute":
+                        tokens = [x for x in tokens if x != " "][1:]
+                        argumentos = None
+                        if len(tokens) == 0:
+                            Erro(linha=[linha, i+1], tipo="Execute sem nome.")
+                        if len(tokens) > 1:
+                            argumentos = tokens[1:]
 
-                case "if":
-                    tokens = [x for x in tokens if x != " "] 
-                    if 1 >= len(tokens):
-                        Erro(linha=[linha, i+1], tipo="Condicional sem argumento.")
-                    ifNode = (ConditionalIf(pergunta=tokens[1:],corpo=None ,fim=None, depth=depth, linha=[linha, i+1]))
-                    ifNode.pergunta = Eval(variaveis=self.variaveis, askNode=ifNode).createOperationAst(ifNode.pergunta)
-                    self.nodes.append(ifNode)
 
-                case "elif":
-                    tokens = [x for x in tokens if x != " "]
-                    if 1 >= len(tokens):
-                        Erro(linha=[linha, i+1], tipo="Condicional sem argumento.")
-                    elifNode = ConditionalElse(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1])
-                    elifNode.pergunta = Eval(variaveis=self.variaveis, askNode=elifNode).createOperationAst(elifNode.pergunta)
-                    self.nodes.append(elifNode)
+                        self.nodes.append(Execute(execWho=tokens[0], argumentos=argumentos, valor=None, depth=depth, linha=[linha, i+1]))
 
-                case "else":
-                    self.nodes.append(Else(corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
+                    case "apply":
+                        tokens = [x for x in tokens if x != " "][1:]
+                        if len(tokens) != 1:
+                            Erro(linha=[linha, i+1], tipo="Comando apply com quantia indevida de argumentos.")
+                        self.nodes.append(Apply(variavel=tokens[0], depth=depth, linha=[linha, i+1]))
 
-                case "set":
-                    tokens = tokens[2:]
-                    if 3 > len(tokens) or tokens[1] != " ":
-                        Erro(linha=[linha, i+1], tipo="Comando set com operação malformada.")
+                    case "while":
+                        tokens = [x for x in tokens if x != " "] 
+                        if 1 >= len(tokens):
+                            Erro(linha=[linha, i+1], tipo="Loop sem argumento.")
+                        whileNode = (WhileLoop(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
+                        whileNode.pergunta = Eval(variaveis=self.variaveis, askNode=whileNode).createOperationAst(whileNode.pergunta)
+                        self.nodes.append(whileNode)
 
-                    varNome = tokens[0]
-                    varValor = [x for x in tokens[2:] if x != " "]
+                    case "if":
+                        tokens = [x for x in tokens if x != " "] 
+                        if 1 >= len(tokens):
+                            Erro(linha=[linha, i+1], tipo="Condicional sem argumento.")
+                        ifNode = (ConditionalIf(pergunta=tokens[1:],corpo=None ,fim=None, depth=depth, linha=[linha, i+1]))
+                        ifNode.pergunta = Eval(variaveis=self.variaveis, askNode=ifNode).createOperationAst(ifNode.pergunta)
+                        self.nodes.append(ifNode)
 
-                    if any(not char.isalpha() for char in varNome):
-                        Erro(linha=[linha, i+1], tipo="Numero em nome de variável.")
+                    case "elif":
+                        tokens = [x for x in tokens if x != " "]
+                        if 1 >= len(tokens):
+                            Erro(linha=[linha, i+1], tipo="Condicional sem argumento.")
+                        elifNode = ConditionalElse(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1])
+                        elifNode.pergunta = Eval(variaveis=self.variaveis, askNode=elifNode).createOperationAst(elifNode.pergunta)
+                        self.nodes.append(elifNode)
 
-                    setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
-                    setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
-                    self.nodes.append(setNode)
+                    case "else":
+                        self.nodes.append(Else(corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
 
-                    if tokens[1] not in self.variaveis:
-                        varNode = Variavel(nome=varNome, valor=None, linha=[linha, i+1])
-                        self.varnodes.append(varNode)
-                        self.variaveis[varNome] = varNode
+                    case "set":
+                        tokens = tokens[2:]
+                        if 3 > len(tokens) or tokens[1] != " ":
+                            Erro(linha=[linha, i+1], tipo="Comando set com operação malformada.")
 
-                case "show":
-                    if " " in tokens:
-                        tokens.remove(" ")
-                    if 1 >= len(tokens):
-                        Erro(linha=[linha, i+1], tipo="Comando show sem argumentos.")
-                    if tokens.count('`') % 2 != 0:
-                        Erro(linha=[linha, i+1], tipo="Quantia indevida de indicadores.")
-                    self.nodes.append(Show(content=tokens[1:], depth=depth, linha=[linha, i+1]))
+                        varNome = tokens[0]
+                        varValor = [x for x in tokens[2:] if x != " "]
 
-                case "get":
-                    if " " in tokens:
-                        tokens.remove(" ")
-                    tokens = tokens[1:]
-                    if 0 >= len(tokens):
-                        Erro(linha=[linha, i+1], tipo="Comando get sem variável.")
-                    variavelNome = tokens[0]
-                    conteudo = None
-                    if len(tokens) > 1 and tokens[1] == " ":
-                        conteudo = tokens[2:]
-                    elif len(tokens) > 1 and tokens[1] != " ":
-                        Erro(linha=[linha, i+1], tipo="Comando get com argumentos misturados.")
+                        if any(not char.isalpha() for char in varNome):
+                            Erro(linha=[linha, i+1], tipo="Numero em nome de variável.")
 
-                    if variavelNome not in self.variaveis:
-                        Erro(linha=[linha, i+1], tipo="Comando get em variável não declarada.")
+                        setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
+                        setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
+                        self.nodes.append(setNode)
 
-                    self.nodes.append(Get(content=conteudo, setwho=variavelNome, depth=depth, linha=[linha, i+1]))
+                        if tokens[1] not in self.variaveis:
+                            varNode = Variavel(nome=varNome, valor=None, linha=[linha, i+1])
+                            self.varnodes.append(varNode)
+                            self.variaveis[varNome] = varNode
 
-                case "nothing":
-                    self.nodes.append(Nothing(depth=depth, linha=[linha, i+1]))
+                    case "show":
+                        if " " in tokens:
+                            tokens.remove(" ")
+                        if 1 >= len(tokens):
+                            Erro(linha=[linha, i+1], tipo="Comando show sem argumentos.")
+                        if tokens.count('`') % 2 != 0:
+                            Erro(linha=[linha, i+1], tipo="Quantia indevida de indicadores.")
+                        self.nodes.append(Show(content=tokens[1:], depth=depth, linha=[linha, i+1]))
 
-                case "exit":
-                    self.nodes.append(Exit(depth=depth, linha=[linha, i+1]))
+                    case "get":
+                        if " " in tokens:
+                            tokens.remove(" ")
+                        tokens = tokens[1:]
+                        if 0 >= len(tokens):
+                            Erro(linha=[linha, i+1], tipo="Comando get sem variável.")
+                        variavelNome = tokens[0]
+                        conteudo = None
+                        if len(tokens) > 1 and tokens[1] == " ":
+                            conteudo = tokens[2:]
+                        elif len(tokens) > 1 and tokens[1] != " ":
+                            Erro(linha=[linha, i+1], tipo="Comando get com argumentos misturados.")
 
-                case "#":
-                    pass
+                        if variavelNome not in self.variaveis:
+                            Erro(linha=[linha, i+1], tipo="Comando get em variável não declarada.")
 
-                case _:
-                    Erro(linha=[linha, i+1], tipo="Comando desconhecido.")
+                        self.nodes.append(Get(content=conteudo, setwho=variavelNome, depth=depth, linha=[linha, i+1]))
+
+                    case "nothing":
+                        self.nodes.append(Nothing(depth=depth, linha=[linha, i+1]))
+
+                    case "exit":
+                        self.nodes.append(Exit(depth=depth, linha=[linha, i+1]))
+
+                    case "#":
+                        pass
+
+                    case _:
+                        Erro(linha=[linha, i+1], tipo="Comando desconhecido.")
     
         self.meaningParse()
         return self
@@ -167,8 +191,8 @@ class Parser:
                 if i+1 >= nodeCount or self.nodes[i+1].depth <= nodeDepth:
                     Erro(self.nodes[i].linha, tipo="Comando sem corpo")
                 else:
-                    funcEnvironment = {}
                     if isinstance(self.nodes[i], Function):
+                        funcEnvironment = self.nodes[i].environment
                         result = handleFunction(i+1, self.nodes[i])
                         if result is not None:
                             funcEnvironment[self.nodes[i+1].setwho] = result
@@ -200,7 +224,7 @@ class Parser:
             if isinstance(self.nodes[i], Function):
                 if not isinstance(self.nodes[i].fim, Result):
                     endNodeIndex = self.nodes.index(self.nodes[i].fim)+1
-                    self.nodes.insert(endNodeIndex, Result(varRetorno=None, valor=None, funcaoPai=self.nodes[i].nome, depth=self.nodes[i].depth, linha=None))
+                    self.nodes.insert(endNodeIndex, Result(retorno=None, valor=None, funcaoPai=self.nodes[i].nome, depth=self.nodes[i].depth, linha=None))
                     self.nodes[i].fim = self.nodes[endNodeIndex]
                     nodeCount+=1
             i += 1

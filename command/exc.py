@@ -13,18 +13,18 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
         if not isinstance(node, (Conditional, Loop, Dummy)):
             lastConditionalResult[node.depth] = 1
         match node:
-
             case Result():
                 if node.funcaoPai is None:
                     Erro(linha=node.linha, tipo="Result sem função.")
-                if node.varRetorno is not None:
-                    if node.varRetorno not in environment[-1]:
-                        Erro(linha=node.linha, tipo="Result de variável não declarada")
-                    node.valor = environment[-1][node.varRetorno].valor
-                funcoes[node.funcaoPai].caller.valor = node.valor
+                if node.retorno is not None:
+                    node.valor = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.retorno, variaveis=environment[-1])
+
+                funcoes[node.funcaoPai].caller[-1].valor = node.valor
+                #print(funcoes[node.funcaoPai].caller[-1].linha)
 
                 environment.pop()
-                i = nodesIndex[funcoes[node.funcaoPai].caller]
+                i = nodesIndex[funcoes[node.funcaoPai].caller[-1]]
+                funcoes[node.funcaoPai].caller.pop()
 
             case Function():
                 i = nodesIndex[node.fim]
@@ -34,8 +34,19 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                     newEnv = {}
                     for env in funcoes[node.execWho].environment:
                         newEnv[env] = funcoes[node.execWho].environment[env].copy()
+
+
+                    if type(funcoes[node.execWho].argumentos) != type(node.argumentos) or len(funcoes[node.execWho].argumentos) != len(node.argumentos):
+                        Erro(linha=node.linha, tipo="Quantia de argumentos indevida.")
+                    else:
+                        for i, var in enumerate(funcoes[node.execWho].argumentos):
+                            if node.argumentos[i] in environment[-1]:
+                                newEnv[var].valor = environment[-1][node.argumentos[i]].valor
+                            else:
+                                newEnv[var].valor = node.argumentos[i]
+
                     environment.append(newEnv)
-                    funcoes[node.execWho].caller = node
+                    funcoes[node.execWho].caller.append(node)
                     i = nodesIndex[funcoes[node.execWho].corpo]-1
                 else:
                     Erro(linha=node.linha, tipo="Funcao inexistente.")
@@ -46,11 +57,8 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                     Erro(linha=node.linha, tipo="Apply em variavel não declarada.")
                 if not isinstance(nodes[prevIndex], Execute):
                     Erro(linha=node.linha, tipo="Comando antes de apply não é execute.")
-
-                environment[-1][node.variavel].valor = nodes[prevIndex].valor
-
-                
-
+                if nodes[prevIndex].valor is not None:
+                    environment[-1][node.variavel].valor = nodes[prevIndex].valor
 
             case WhileLoop():
                 sucessoCondicional = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.pergunta, variaveis=environment[-1])
@@ -62,7 +70,6 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                 environment[-1][node.setwho].valor = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto, variaveis=environment[-1])
 
             case Show():
-                
                 node.show(environment[-1])
         
             case Get():

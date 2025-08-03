@@ -21,7 +21,6 @@ class Operacao:
         if self.di in variaveis:
             direita = self.getValor(direita, variaveis)
 
-
         if isinstance(self.es, Operacao):
             esquerda = self.es.operate(variaveis)
         if isinstance(self.di, Operacao):
@@ -191,4 +190,6 @@ class Eval:
             resultado = operationAst
         if isinstance(resultado, float) and int(resultado) == float(resultado):
             return(int(resultado))
+        elif resultado in variaveis:
+            return(variaveis[resultado].valor)
         return(resultado)
