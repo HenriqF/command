@@ -1,11 +1,19 @@
-funcoes 
-    comando "function"
-    comando "return"
-    comando "apply"
-    apply length() a
-    comando "execute"
-    execute die()
+comando "function"
+comando "return"
+comando "execute"
 
+
+funcoes:
+    comando "apply"
+    execute die()
+    comando "apply a" --> aplica à variavel o resultado do ultimo comando "execute"
+
+SCOPES:
+ LOCAL
+ FUNCSCOPE   GLOBAL
+[VARIAVEIS{},VARIAVEIS{}]
+
+local scope: mudar variaveis{}.
 porralo ca e etcetera...
 
 lista, hash..

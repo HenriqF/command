@@ -3,6 +3,9 @@ class Variavel:
         self.nome = nome
         self.valor = valor
         self.linha = linha
+
+    def copy(self):
+        return Variavel(nome=self.nome, valor=self.valor, linha=self.linha)
 class Erro:
     def __init__(self, linha, tipo):
         self.linha = linha
@@ -48,7 +51,7 @@ class Show:
                     i += 1
                 i+=1
             if i < l:
-                if content[i] in variaveis:
+                if content[i] in variaveis and variaveis[content[i]].valor is not None:
                     print(variaveis[content[i]].valor, end="")
                 else:
                     print(content[i], end="")
@@ -83,6 +86,38 @@ class Nothing:
         self.depth = depth
         self.linha = linha
 
+
+#Funcoes
+class Function(TemCorpo):
+    def __init__(self, nome, corpo, fim, environment, caller, depth, linha):
+        self.nome = nome
+        self.corpo = corpo
+        self.fim = fim
+        self.environment = environment
+        self.caller = caller
+        self.depth = depth
+        self.linha = linha
+
+class Result:
+    def __init__(self, varRetorno, valor, funcaoPai, depth, linha):
+        self.varRetorno = varRetorno
+        self.valor = valor
+        self.funcaoPai = funcaoPai
+        self.depth = depth
+        self.linha = linha
+
+class Execute:
+    def __init__(self, execWho, valor, depth, linha):
+        self.execWho = execWho
+        self.valor = valor
+        self.depth = depth
+        self.linha = linha
+
+class Apply:
+    def __init__(self, variavel, depth, linha):
+        self.variavel = variavel
+        self.depth = depth
+        self.linha = linha
 #Loops
 class WhileLoop(Loop):
     def __init__(self, pergunta, corpo, fim, depth, linha):

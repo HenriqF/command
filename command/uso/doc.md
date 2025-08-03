@@ -263,6 +263,116 @@
 
 <br>
 
+# Funções
+<details>
+<summary>Comando <b> function </b> </summary>
+
+* Usado para definir funções, segue a seguinte estrutura:
+
+        function NOME
+            código
+
+* Há também um subcomando: <b>result</b>. Ele é utilizado para declarar que a função terminou de executar:
+
+        function Nome
+            código
+            result
+
+* Ele também pode ser usado para retornar o valor de uma variável usada dentro da função:
+
+        function Nome
+            set a 10
+            result a
+
+<details>
+<summary>Erros </summary>
+
+* Quando é criada uma função sem nome, aparece um erro como o seguinte: 
+
+        Erro : Funcao sem argumento. --> "function", linha 1
+
+* Quando uma função não tem corpo identado, aparece um erro como o seguinte:
+
+        Erro : Comando sem corpo --> "function a", linha 1
+
+* Quando tenta-se criar uma função cujo nome já foi usado em outra, um erro como o seguinte aparece:
+
+        Erro : Uma função com tal nome já existe. --> "function a", linha 3
+
+* Quando é dado mais de um argumento ao comando result, um erro como o seguinte aparece:
+
+        Erro : Argumentos em demasia. --> "    result a b", linha 2
+
+* Quando um result é usado fora de função, um erro como o seguinte aparece:
+
+        Erro : Result sem função. --> "result", linha 1
+
+* Quando um result tenta usar uma variável não declarada, um erro como o seguinte aparece:
+
+        Erro : Result de variável não declarada --> "    result a", linha 2
+</details>
+<br>
+</details>
+
+
+
+<details>
+<summary>Comando <b> execute </b> </summary>
+
+* Usado para executar uma função, segue a seguinte estrutura:
+
+        execute NOMEFUNCAO
+
+<details>
+<summary>Erros </summary>
+
+* Quando não é dado um nome de função ao comando execute, um erro como o seguinte aparece:
+
+        Erro : Execute sem nome. --> "execute", linha 1
+
+* Quando se tenta executar uma função que não existe, um erro como o seguinte aparece:
+
+        Erro : Funcao inexistente. --> "execute a", linha 1
+</details>
+<br>
+</details>
+
+
+
+<details>
+<summary>Comando <b> apply </b> </summary>
+
+* Usado para aplicar o valor retornado de uma função a uma variavel. Segue a seguinte estrutura:
+
+        set variavel 0
+        execute funcao
+        apply variavel
+
+* O valor retornado de funcao é aplicado a variavel.
+
+<details>
+<summary>Erros </summary>
+
+* Quando é dada uma quantia indevida de argumentos ao comando apply, um erro como o seguinte aparece:
+
+        Erro : Comando apply com quantia indevida de argumentos. --> "apply variavel a", linha 6
+
+* Quando se tenta aplicar a uma variavel não declarada, um erro como o seguinte aparece:
+
+        Erro : Apply em variavel não declarada. --> "apply variav ", linha 6
+
+* Quando o comando antes de um apply não é um execute, um erro como o seguinte aparece:
+
+        Erro : Comando antes de apply não é execute. --> "apply variavel", linha 7
+
+
+</details>
+<br>
+
+</details>
+<br>
+
+
 # Usando o Console:
 <details>
 <summary>Comando <b> show </b></summary>
@@ -344,9 +454,8 @@
 
 <details>
 <summary> Erros </summary>
-        
+
 * Quando é usado um comando desconhecido, um erro como o seguinte aparece:
 
         Erro : Comando desconhecido. --> "comandoincrivel = 20", linha 1
-
 </details>

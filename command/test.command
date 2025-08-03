@@ -1,16 +1,10 @@
-set numeroA 0
-set numeroB 1
+set variavel 0
 
-set numero 0
-get numero Numero-->
-while numero > 0
-    if (numero % 2) = 0
-        set numeroA numeroA + numeroB
-    else
-        set numeroB numeroA + numeroB
-    set numero numero - 1
+function a
+    set valor 20
+    result valor
 
-if (numero % 2) = 0
-    show Pronto! numeroA
-    exit
-show Pronto! numeroB
+execute a
+nothing
+apply variavel
+
