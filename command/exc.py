@@ -3,7 +3,6 @@ from nos import *
 from eval import *
 import time as Time
 
-
 def execute(nodes, variaveis, funcoes, nodesIndex):
     environment = [variaveis]
     lastConditionalResult = {}
@@ -68,6 +67,17 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
 
             case Setter():
                 environment[-1][node.setwho].valor = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto, variaveis=environment[-1])
+
+            case Edit():
+                if node.setwho not in environment[-1]:
+                    Erro(linha=node.linha, tipo="Comando edit com variável não declarada.")
+                if node.index == "add":
+                    environment[-1][node.setwho].valor.append(Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto, variaveis=environment[-1]))
+                else:
+                    if node.index >= len(environment[-1][node.setwho].valor):
+                        Erro(linha=node.linha, tipo="Índice maior que tamanho da variável.")
+
+                    environment[-1][node.setwho].valor[node.index] = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto, variaveis=environment[-1])
 
             case Show():
                 node.show(environment[-1])

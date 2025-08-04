@@ -28,13 +28,27 @@ class Operacao:
 
         if esquerda is not None:
             if isinstance(esquerda, (int, float)) != isinstance(direita, (int, float)):
-                if not(isinstance(esquerda,(str)) and isinstance(direita, (int,float)) and self.operador == "*"):
+                if not(isinstance(direita, (str, list)) and isinstance(esquerda, (int,float)) and self.operador in {"*", "@"}):
                     Erro(linha=self.askNode.linha, tipo="Operação proibida com tipos diferentes.")
 
         if isinstance(esquerda, (str)) and ((self.operador not in {"+","*","=",">","<"}) or (isinstance(direita, (str)) and self.operador == "*")):
             Erro(linha=self.askNode.linha, tipo="Operador mal-usado.")
 
         match self.operador:
+            #Acesso
+
+            case "@":
+                if not isinstance(esquerda, int):
+                    Erro(linha=self.askNode.linha, tipo="O índice de acesso deve ser um inteiro.")
+
+                if not isinstance(direita, (str, list)):
+                    Erro(linha=self.askNode.linha, tipo="Variável acessada deve ser posicional.")
+
+                if esquerda >= len(direita):
+                    Erro(linha=self.askNode.linha, tipo="Índice maior que quantia de elementos.")
+                return(direita[esquerda])
+
+
             #Operadores unários
             case "u-":
                 return(direita * -1)
@@ -108,13 +122,15 @@ class Eval:
                       "+":4,"-":4,
                       "*":5,"/":5,"%":5,
                       "^":6,
-                      "!":7,"u-":7
+                      "!":7,"u-":7,
+                      "@":8
                       }
-        self.binario = {"~","|","&",">","<","=","+","-","*","/","%","^"}
+        self.binario = {"~","|","&",">","<","=","+","-","*","/","%","^","@"}
         self.unario = {"!","u-"}
 
     def createOperationAst(self, operation):
         tokens = operation[:]
+
         def transform(tokens):
             i = 0
             while i < len(tokens):
@@ -179,11 +195,18 @@ class Eval:
 
             return(resultado[0])
 
+
+        if len(tokens) == 1 and isinstance(tokens[0], list):
+            return(tokens[0])
+
         opAST = createAST(tokens)
         result = opAST
         return(result)
     
     def executeAst(self, operationAst, variaveis):
+        if isinstance(operationAst, list):
+            return(operationAst)
+
         if isinstance(operationAst, Operacao):
             resultado = operationAst.operate(variaveis)
         else:

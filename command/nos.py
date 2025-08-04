@@ -27,6 +27,13 @@ class Conditional(TemCorpo):
     pass
 
 #Comandos
+class Edit:
+    def __init__(self,setwho, index, setto, depth, linha):
+        self.setwho = setwho
+        self.index = index
+        self.setto = setto
+        self.depth = depth
+        self.linha = linha
 class Setter:
     def __init__(self, setwho, setto, depth, linha):
         self.setwho = setwho
@@ -41,18 +48,20 @@ class Show:
 
     def show(self, variaveis):
         content = self.content
+
         l = len(content)
         i = 0 
         while i < l:
-            if content[i] == '`':
-                i+=1
-                while content[i] != '`':
-                    print(content[i], end="")
-                    i += 1
-                i+=1
+            if isinstance(content[i], str) and '`' in content[i]:
+                print(content[i].strip("`"), end="")
+                i += 1
             if i < l:
                 if content[i] in variaveis and variaveis[content[i]].valor is not None:
-                    print(variaveis[content[i]].valor, end="")
+                    value = variaveis[content[i]].valor
+                    if isinstance(value, list):
+                        Erro(linha=self.linha, tipo="Não é possível por no console uma lista.")
+                    else:
+                        print(value, end="")
                 else:
                     print(content[i], end="")
                 i+=1

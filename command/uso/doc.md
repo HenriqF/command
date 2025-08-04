@@ -22,6 +22,7 @@
         % : 5 : Módulo       : 2 % 2 = 0
         ^ : 6 : Potência     : 5 ^ 3 = 125
         ~ : 0 : Aproximação  : 0~10.6 = 11 (a ~ b → arredonda o número a com b casas decimais)
+        @ : 7 : Posição      : ( i @ x ) Seleciona a posição "i" de uma variável x.  
 
 * Comparadores:
 
@@ -52,44 +53,6 @@
 
 </details>
 
-<details>
-<summary>Erros</summary>
-
-* Quando uma operação é realizada entre dois tipos diferentes sem ter suporte, um erro como o seguinte aparece:
-
-        Erro : Operação proibida com tipos diferentes. --> "set a 35 + alpha", linha 1
-
-* Quando uma operador é usado da forma incorreta, um erro como o seguinte aparece:
-
-        Erro : Operador mal-usado. --> "set a -sigma", linha 1
-
-* Quando se tenta negar um valor não inteiro, um erro como o seguinte aparece:
-
-        Erro : Negação de não-inteiro --> "set a !10.5", linha 1
-
-* Quando se tenta dividir por 0, um erro como o seguinte aparece:
-
-        Erro : Divisão por zero. --> "set a 10 / 0", linha 1
-
-* Quando se tenta obter o modulo 0, um erro como o seguinte aparece:
-        
-        Erro : Modulo com zero. --> "set a 10 % 0", linha 1
-
-* Quando se tenta usar o comparador de textos com números, um erro como o seguinte aparece:
-
-        Erro : Comparador de texto com tipo numérico --> "set a 10 $ 20", linha 1
-
-* Quando se escreve uma operação incorreta, um erro como o seguinte aparece:
-
-        Erro : Operação malformada --> "set a --2", linha 1
-
-* Quando parenteses não estão balanceados, um erro como o seguinte aparece:
-
-        Erro : Parenteses não-balanceados. --> "set a 1 > 2)", linha 1
-
-
-</details>
-
 <br>
 
 
@@ -100,7 +63,7 @@
 <summary>Tipos de variaveis (dados) </summary>
 
 
-* Existem três tipos principais de dados simples nessa linguagem:
+* Existem três tipos de dados simples nessa linguagem:
 
         Tipo numérico (num): Qualquer número.
         Tipo string   (txt): Qualquer sequência de texto.
@@ -108,30 +71,33 @@
                 
 * Para representar valores booleanos (verdadeiro / falso), é usado um tipo numérico. O valor 1 representa a verdade, enquanto qualquer outro é interpretado como falso.
 
+* Existem também dois tipos de dados compostos nessa linguagem:
+
+        Tipo lista         : Uma sequência de tipos simples
+        Tipo mapa          : Um mapeamento x -> y de tipos simples
+
 </details>
 <details>
 <summary>Criando e Modificando Variaveis</summary>
 
 * Para criar e/ou modificar o valor de uma variável, utiliza-se a seguinte estrutura:
 
-        set NOME VALOR.
+        set VARIAVEL VALOR.
 
-<br>
 
-* "NOME" deve conter apenas letras (maiúsculas ou minúsculas).<br>
-* "VALOR" é uma [OPERAÇÃO](#operações)
-<details>
-<summary>Erros</summary>
+  "VARIAVEL" deve ser nomeada usando apenas letras (maiúsculas ou minúsculas).<br>
+  "VALOR" é uma [OPERAÇÃO](#operações)
 
-* Se um número for encontrado no nome de uma variável, um erro como o seguinte aparecerá:
+  
+* Para modificar uma posição de uma variável, utiliza-se a seguinte 
 
-        Erro : Numero em nome de variável. --> "set numero0 0", linha 1
+        edit ÍNDICE VARIAVEL VALOR
 
-* Quando um comando set é usado sem seguir a estrutura padrão, um erro como o seguinte aparece:
+  "ÍNDICE" deve ser um número inteiro, a posição dentro de VARIAVEL a ser modificada.
+  "VARIAVEL" deve ser nomeada usando apenas letras (maiúsculas ou minúsculas).<br>
+  "VALOR" é uma [OPERAÇÃO](#operações)
 
-        Erro : Comando set com operação malformada. --> "set numero", linha 1
-
-</details>
+  
 </details>
 
 <br>
@@ -213,22 +179,6 @@
 
 </details>
 
-<details>
-<summary>Erros </summary>
-
-* Caso seja criado um "if" ou um "elif" sem operação, um erro como o seguinte aparecerá:
-
-        Erro : Condicional sem argumento. --> "if ", linha 1
-
-* Caso seja criada uma condicional sem corpo (código identado), um erro como o seguinte aparecerá:
-
-        Erro : Comando sem corpo --> "if 10", linha 1
-
-
-
-</details>
-
-
 <br>
 
 # Loops
@@ -244,18 +194,6 @@
 * Enquanto o valor da [OPERAÇÃO](#operações) for igual a 1, o código identado será executado.
 * Após cada execução, a operação é reavaliada. Se por ventura deixar de valer 1, o ciclo é quebrado e o programa segue.
 
-<details>
-<summary>Erros</summary>
-
-* Quando é usado esse comando sem uma operação, um erro como o seguinte aparece:
-
-        Erro : Loop sem argumento. --> "while ", linha 1
-
-* Caso seja criado um while sem corpo (código identado), um erro como o seguinte aparecerá:
-
-        Erro : Comando sem corpo --> "while 1 ", linha 1
-
-</details>
 
 </details>
 
@@ -283,38 +221,7 @@
 
 * O subcomando <b>result</b> é opicional e finaliza a função. Pode também retornar uma [operação](#operações) (como visto acima), que será enviada ao comando chamador.
 
-  
 
-<details>
-<summary>Erros </summary>
-
-* Quando é criada uma função sem nome, aparece um erro como o seguinte: 
-
-        Erro : Funcao sem argumento. --> "function", linha 1
-
-* Quando uma função não tem corpo identado, aparece um erro como o seguinte:
-
-        Erro : Comando sem corpo --> "function a", linha 1
-
-* Quando tenta-se criar uma função cujo nome já foi usado em outra, um erro como o seguinte aparece:
-
-        Erro : Uma função com tal nome já existe. --> "function a", linha 3
-
-* Quando se tenta criar uma função dentro de outra, um erro como o seguinte aparece:
-
-        Erro : Funcao dentro de funcao. --> "    function b", linha 2
-
-* Quando é dado mais de um argumento ao comando result, um erro como o seguinte aparece:
-
-        Erro : Argumentos em demasia. --> "    result a b", linha 2
-        
-
-* Quando um result é usado fora de função, um erro como o seguinte aparece:
-
-        Erro : Result sem função. --> "result", linha 1
-
-</details>
-<br>
 </details>
 
 
@@ -333,22 +240,7 @@
 
         execute soma 10 20            
 
-<details>
-<summary>Erros </summary>
 
-* Quando não é dado um nome de função ao comando execute, um erro como o seguinte aparece:
-
-        Erro : Execute sem nome. --> "execute", linha 1
-
-* Quando se tenta executar uma função que não existe, um erro como o seguinte aparece:
-
-        Erro : Funcao inexistente. --> "execute a", linha 1
-
-* Quando a quantia de valores de entrada não condiz com a quantia solicitada pela função chamada, um erro como o seguinte aparece:
-
-        Erro : Quantia de argumentos indevida. --> "execute fib 10", linha 4
-</details>
-<br>
 </details>
 
 
@@ -363,25 +255,6 @@
         apply variavel
 
 * O valor retornado de funcao é aplicado a variavel.
-
-<details>
-<summary>Erros </summary>
-
-* Quando é dada uma quantia indevida de argumentos ao comando apply, um erro como o seguinte aparece:
-
-        Erro : Comando apply com quantia indevida de argumentos. --> "apply variavel a", linha 6
-
-* Quando se tenta aplicar a uma variavel não declarada, um erro como o seguinte aparece:
-
-        Erro : Apply em variavel não declarada. --> "apply variav ", linha 6
-
-* Quando o comando antes de um apply não é um execute, um erro como o seguinte aparece:
-
-        Erro : Comando antes de apply não é execute. --> "apply variavel", linha 7
-
-
-</details>
-<br>
 
 </details>
 <br>
@@ -414,22 +287,8 @@
         SAÍDA:
 
         Valor de variavel: 12
-    
-
-<details>
-<summary>Erros</summary>
-
-* Escrever uma estrutura não-balanceada de indicadores resultará em um erro como o seguinte:
-
-        Erro : Quantia indevida de indicadores. --> "show `a", linha 2
-
-* A omissão de argumentos resultará em um erro como o seguinte:
-
-        Erro : Comando show sem argumentos. --> "show", linha 1
 </details>
 
-
-</details>
 
 
 <details>
@@ -441,23 +300,6 @@
 
 * VARIAVEL deve ser o nome de uma variável já declarada
 * ARGUMENTOS é um trecho opicional, um texto que aparece no console quando o comando é executado.
-
-<details>
-<summary>Erros</summary>
-
-* Tentar usar o comando get com uma variável não declarada resulta em um erro como o seguinte:
-
-        Erro : Comando get em variável não declarada. --> "get var", linha 1
-
-* Tentar usar o comando get sem nomear uma variável resulta em um erro como o seguinte:
-
-        Erro : Comando get sem variável. --> "get", linha 1
-
-* Não separar a variável do argumento resulta em um erro como o seguinte:
-
-        Erro : Comando get com argumentos misturados. --> "get var-->", linha 2
-
-</details>
 </details>
 <br>
 
@@ -465,11 +307,3 @@
 
 * Comando <b>exit</b>    : Serve para terminar a execução do script;
 * Comando <b>nothing</b> : Serve principalmente para testes. Não faz nada.
-
-<details>
-<summary> Erros </summary>
-
-* Quando é usado um comando desconhecido, um erro como o seguinte aparece:
-
-        Erro : Comando desconhecido. --> "comandoincrivel = 20", linha 1
-</details>

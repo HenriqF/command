@@ -1,19 +1,34 @@
-comando "function"
-comando "return"
-comando "execute"
+operador:
+    set a [100, 200, 300]
+    set b {wow -> coisa, thing -> wow}
+
+   0@a = 100      -> index 0 em a
+   wow@b = coisa  -> termo wow em b
 
 
-funcoes:
-    comando "apply"
-    execute die()
-    comando "apply a" --> aplica à variavel o resultado do ultimo comando "execute"
+vars:
+    lista, hash
+    unset var
 
-SCOPES:
- LOCAL
- FUNCSCOPE   GLOBAL
-[VARIAVEIS{},VARIAVEIS{}]
+loops:
+    break   
+    skip
 
-local scope: mudar variaveis{}.
-porralo ca e etcetera...
+Extras:
+    try
+    execpt
 
-lista, hash..
+    import.. permite:
+
+    funcoes Built-in
+        edita:
+            execute reverse var
+            execute sort var
+            execute insert var char index
+            execute remove var index
+
+        dados:
+            execute lengthOf var
+            execute typeOf var
+            execute random min max
+            execute sum var

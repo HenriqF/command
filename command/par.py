@@ -4,7 +4,6 @@ from eval import *
 from exc import execute
 import time as Time
 
-
 sys.set_int_max_str_digits(2147483647)
 
 class Parser:
@@ -16,12 +15,11 @@ class Parser:
         self.indexNodes = indexNodes
 
     def parse(self, code):
-        #linhas = [x for x in code.split("\n") if x.strip() != ""]
         linhas = [x for x in code.split("\n")]
 
         for i, linha in enumerate(linhas):
             if linha != "":
-                tokens = self.getTokens(linha)
+                tokens = self.getTokens(linha, i)
                 if not tokens:
                     continue
 
@@ -112,14 +110,26 @@ class Parser:
 
                     case "set":
                         tokens = tokens[2:]
+
                         if 3 > len(tokens) or tokens[1] != " ":
                             Erro(linha=[linha, i+1], tipo="Comando set com operação malformada.")
-
                         varNome = tokens[0]
                         varValor = [x for x in tokens[2:] if x != " "]
-
                         if any(not char.isalpha() for char in varNome):
                             Erro(linha=[linha, i+1], tipo="Numero em nome de variável.")
+
+                        if varValor[0] == "[" and varValor[-1] == "]":
+                            varValor = varValor[1:-1]
+                            if len(varValor) != 0:
+                                count = 1
+                                for token in varValor:
+                                    if token == ",":
+                                        count += 1
+
+                                varValor = [x for x in varValor if x != ","]
+                                if len(varValor) != count:
+                                    Erro(linha=[linha, i+1], tipo="Lista mal-formada")
+                            varValor = [varValor]
 
                         setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
                         setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
@@ -129,6 +139,18 @@ class Parser:
                             varNode = Variavel(nome=varNome, valor=None, linha=[linha, i+1])
                             self.varnodes.append(varNode)
                             self.variaveis[varNome] = varNode
+
+                    case "edit":
+                        tokens = [x for x in tokens[2:] if x != " "]
+                        if len(tokens) < 3:
+                            Erro(linha=[linha, i+1], tipo="Comando edit com quantia indevida de argumentos")
+                        if (not isinstance(tokens[0], int)) and (tokens[0] != "add") :
+                            Erro(linha=[linha, i+1], tipo="Comando edit malformado")
+                        setto = [x for x in tokens[2:] if x != " "]
+
+                        editNode = Edit(setwho=tokens[1], index=tokens[0], setto=setto, depth=depth, linha=[linha, i+1])
+                        editNode.setto = Eval(variaveis=self.variaveis, askNode=editNode).createOperationAst(editNode.setto)
+                        self.nodes.append(editNode)
 
                     case "show":
                         if " " in tokens:
@@ -182,7 +204,6 @@ class Parser:
                 Erro(linha=self.nodes[i].linha, tipo="Funcao dentro de funcao.")
             return None
             
-
         i = 0
         nodeCount = len(self.nodes)
         while i < nodeCount:
@@ -232,7 +253,7 @@ class Parser:
         for i, node in enumerate(self.nodes):
             self.indexNodes[node] = i
 
-    def getTokens(self, linha):
+    def getTokens(self, linha, pos):
         tokens = []
         current = ""
         i = 0 
@@ -248,10 +269,19 @@ class Parser:
 
         while i < len(linha):
             char = linha[i]
-            if char.isnumeric() or char in ".":
+            if char.isnumeric() or char in {"."}:
                 current+=char
             elif char.isalpha():
                 current+=char
+            elif char == '`':
+                current+=char
+                i+=1
+                while i < len(linha) and linha[i] != '`':
+                    current+=linha[i]
+                    i+=1
+                if i >= len(linha):
+                    Erro(linha=[linha, pos+1], tipo="Quantia indevida de indicadores.")
+                current+=linha[i]
             else:
                 if current != "":
                     tokens.append(format(current))
@@ -272,9 +302,6 @@ class Parser:
                 spaceCount = 0
         tokens.insert(0, depth)
         return(tokens)
-
-
-
 
 startTime = Time.time()
 astCommands = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}).parse(open("test.command").read())
