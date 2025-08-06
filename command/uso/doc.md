@@ -317,10 +317,25 @@
 
 * VARIAVEL deve ser o nome de uma variável já declarada
 * ARGUMENTOS é um trecho opicional, um texto que aparece no console quando o comando é executado.
+
+
 </details>
 <br>
 
 # Miscelâneos:
+
+<details>
+<summary>Comando <b>load</b></summary>
+
+* Este comando serve para carregar funções de outros scripts. Segue a seguinte estrutura:
+
+        load NOMESCRIPT
+
+* NOMESCRIPT deve ser o nome de um arquivo .command
+
+<br>
+
+</details>
 
 * Comando <b>exit</b>    : Serve para terminar a execução do script;
 * Comando <b>nothing</b> : Serve principalmente para testes. Não faz nada.

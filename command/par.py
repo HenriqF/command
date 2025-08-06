@@ -1,9 +1,9 @@
 import sys
+import os
 from nos import *
 from eval import *
 from exc import execute
 import time as Time
-
 sys.set_int_max_str_digits(2147483647)
 
 class Parser:
@@ -16,16 +16,34 @@ class Parser:
 
     def parse(self, code):
         linhas = [x for x in code.split("\n")]
-
         for i, linha in enumerate(linhas):
             if linha != "":
                 tokens = self.getTokens(linha, i)
                 if not tokens:
                     continue
-
                 depth = tokens.pop(0)
+                if not tokens:
+                    continue
 
                 match tokens[0]:
+
+                    case "load":
+                        tokens = tokens[2:]
+                        if len(tokens) != 1:
+                            Erro(linha=[linha, i+1], tipo="Load malformado.")
+                        if not os.path.exists(f"{tokens[0]}.command"):
+                            Erro(linha=[linha, i+1], tipo="Script não existe.")
+
+
+                        loaded = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}).parse(open(f"{tokens[0]}.command").read())
+                        for node in loaded.nodes:
+                            self.nodes.append(node)
+
+                        for func in loaded.funcoes:
+                            if func in  self.funcoes:
+                                Erro(linha=[linha, i+1], tipo=f'Função carregada "{func}" já dentro do script.')
+                            self.funcoes[func] = loaded.funcoes[func]
+
                     case "function":
                         tokens = [x for x in tokens if x != " "][1:]
 
@@ -51,9 +69,6 @@ class Parser:
                             Erro(linha=[linha, i+1], tipo="Uma função com tal nome já existe.")
                         self.funcoes[funcNode.nome] = funcNode 
 
-
-
-                        
                         self.nodes.append(funcNode)
                     
                     case "result":
@@ -72,7 +87,6 @@ class Parser:
                         if len(tokens) > 1:
                             argumentos = tokens[1:]
 
-
                         self.nodes.append(Execute(execWho=tokens[0], argumentos=argumentos, valor=None, depth=depth, linha=[linha, i+1]))
 
                     case "apply":
@@ -88,6 +102,9 @@ class Parser:
                         whileNode = (WhileLoop(pergunta=tokens[1:],corpo=None, fim=None, depth=depth, linha=[linha, i+1]))
                         whileNode.pergunta = Eval(variaveis=self.variaveis, askNode=whileNode).createOperationAst(whileNode.pergunta)
                         self.nodes.append(whileNode)
+
+                    case "break":
+                        self.nodes.append(BreakLoop(loopPai=None, depth=depth, linha=[linha, i+1]))
 
                     case "if":
                         tokens = [x for x in tokens if x != " "] 
@@ -224,6 +241,12 @@ class Parser:
                         if result is not None:
                             funcEnvironment[self.nodes[i+1].setwho] = result
 
+
+                    
+                    if isinstance(self.nodes[i] , Loop) and isinstance(self.nodes[i+1], BreakLoop) and (self.nodes[i+1].depth > nodeDepth): 
+                        self.nodes[i+1].loopPai = self.nodes[i]
+
+
                     self.nodes[i].corpo = self.nodes[i+1]
                     j = i+2
                     while j < nodeCount:
@@ -231,6 +254,9 @@ class Parser:
                             result = handleFunction(j, self.nodes[i])
                             if result is not None:
                                 funcEnvironment[self.nodes[j].setwho] = result
+                        if isinstance(self.nodes[i] , Loop) and isinstance(self.nodes[j], BreakLoop) and (self.nodes[j].depth > nodeDepth): 
+                            self.nodes[j].loopPai = self.nodes[i]
+
 
                         if self.nodes[j].depth <= nodeDepth:
                             self.nodes[i].fim = self.nodes[j-1]
@@ -300,13 +326,14 @@ class Parser:
 
         depth = 0
         spaceCount = 0
-        while tokens[0] == " ":
+        while len(tokens) > 0 and tokens[0] == " ":
             tokens.pop(0)
             spaceCount += 1
             if spaceCount == 4:
                 depth += 1
                 spaceCount = 0
         tokens.insert(0, depth)
+
         return(tokens)
 
 startTime = Time.time()

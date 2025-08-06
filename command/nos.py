@@ -96,7 +96,15 @@ class Nothing:
         self.depth = depth
         self.linha = linha
 
-
+#Erros
+class CheckFailure():
+    def __init__(self, corpo, corpoFailure, fim, depth, linha):
+        self.corpo = corpo
+        self.corpoFailure = corpoFailure
+        self.fim = fim
+        self.depth = depth
+        self.linha = linha
+        
 #Funcoes
 class Function(TemCorpo):
     def __init__(self, nome, argumentos, corpo, fim, environment, caller, depth, linha):
@@ -108,7 +116,6 @@ class Function(TemCorpo):
         self.caller = caller
         self.depth = depth
         self.linha = linha
-
 class Result:
     def __init__(self, retorno, valor, funcaoPai, depth, linha):
         self.retorno = retorno
@@ -116,7 +123,6 @@ class Result:
         self.funcaoPai = funcaoPai
         self.depth = depth
         self.linha = linha
-
 class Execute:
     def __init__(self, execWho, argumentos, valor, depth, linha):
         self.execWho = execWho
@@ -124,12 +130,12 @@ class Execute:
         self.valor = valor
         self.depth = depth
         self.linha = linha
-
 class Apply:
     def __init__(self, variavel, depth, linha):
         self.variavel = variavel
         self.depth = depth
         self.linha = linha
+
 #Loops
 class WhileLoop(Loop):
     def __init__(self, pergunta, corpo, fim, depth, linha):
@@ -141,7 +147,12 @@ class WhileLoop(Loop):
 class EndLoop(Dummy):
     def __init__(self, loopPai, depth):
         self.loopPai = loopPai
+        self.depth = depth        
+class BreakLoop(Dummy):
+    def __init__(self, loopPai, depth, linha):
+        self.loopPai = loopPai
         self.depth = depth
+        self.linha = linha
         
 #Condicionais
 class ConditionalIf(Conditional):

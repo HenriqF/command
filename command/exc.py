@@ -64,6 +64,14 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                 lastConditionalResult[node.depth] = sucessoCondicional
                 if sucessoCondicional != 1:
                     i = nodesIndex[node.fim]
+            
+            case BreakLoop():
+                if node.loopPai == None:
+                    Erro(linha=node.linha, tipo="Comando break fora de loop.")
+                i = nodesIndex[node.loopPai.fim]
+
+            case EndLoop():
+                i = nodesIndex[node.loopPai]-1
 
             case Setter():
                 environment[-1][node.setwho].valor = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto, variaveis=environment[-1])
@@ -130,9 +138,6 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
 
             case Exit():
                 return
-
-            case EndLoop():
-                i = nodesIndex[node.loopPai]-1
 
         i += 1
     return
