@@ -10,9 +10,12 @@ class Erro:
     def __init__(self, linha, tipo):
         self.linha = linha
         self.tipo = tipo
-        self.expliciteErro()
 
-    def expliciteErro(self):
+    def parseErr(self):
+        print(f"""\033[31mErro\033[0m : {self.tipo} --> "\033[1m{self.linha[0]}\033[0m", \033[31mlinha {self.linha[1]}\033[0m""")
+        exit(1)
+
+    def execErr(self):
         print(f"""\033[31mErro\033[0m : {self.tipo} --> "\033[1m{self.linha[0]}\033[0m", \033[31mlinha {self.linha[1]}\033[0m""")
         exit(1)
 
@@ -60,7 +63,8 @@ class Show:
                 if content[i] in variaveis and variaveis[content[i]].valor is not None:
                     value = variaveis[content[i]].valor
                     if isinstance(value, list):
-                        Erro(linha=self.linha, tipo="Não é possível por no console uma lista.")
+                        #print(value, end="")
+                        return(Erro(linha=self.linha, tipo="Não é possível por no console uma lista."))
                     else:
                         print(value, end="")
                 else:
@@ -97,14 +101,18 @@ class Nothing:
         self.linha = linha
 
 #Erros
-class CheckFailure():
-    def __init__(self, corpo, corpoFailure, fim, depth, linha):
+class Check(TemCorpo):
+    def __init__(self, corpo, fim, resultVar, depth, linha):
         self.corpo = corpo
-        self.corpoFailure = corpoFailure
         self.fim = fim
+        self.resultVar = resultVar
         self.depth = depth
         self.linha = linha
-        
+class EndCheck(Dummy):
+    def __init__(self, checkPai, depth):
+        self.checkPai = checkPai
+        self.depth = depth     
+
 #Funcoes
 class Function(TemCorpo):
     def __init__(self, nome, argumentos, corpo, fim, environment, caller, depth, linha):
