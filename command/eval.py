@@ -28,15 +28,21 @@ class Operacao:
 
         if isinstance(esquerda, Erro):
             return esquerda
-        if isinstance(direita, Erro):
+        elif isinstance(direita, Erro):
             return direita
 
-        if esquerda is not None:
+        elif esquerda is None:
+            if self.operador not in {"u-","!"}:
+                return(Erro(linha=self.askNode.linha, tipo="Operação proibida com tipos diferentes."))
+
+        elif esquerda is not None:
             if isinstance(esquerda, (int, float)) != isinstance(direita, (int, float)):
                 if not(isinstance(direita, (str, list)) and isinstance(esquerda, (int,float)) and self.operador in {"*", "@"}):
                     return(Erro(linha=self.askNode.linha, tipo="Operação proibida com tipos diferentes."))
+            if (isinstance(esquerda, (list, dict)) or isinstance(direita, (list, dict))) and self.operador != "@":
+                    return(Erro(linha=self.askNode.linha, tipo="Operação proibida com tipos diferentes."))
 
-        if isinstance(esquerda, (str)) and ((self.operador not in {"+","*","=",">","<"}) or (isinstance(direita, (str)) and self.operador == "*")):
+        elif isinstance(esquerda, (str)) and ((self.operador not in {"+","*","=",">","<"}) or (isinstance(direita, (str)) and self.operador == "*")):
             return(Erro(linha=self.askNode.linha, tipo="Operador mal-usado."))
 
         match self.operador:
@@ -211,7 +217,9 @@ class Eval:
             resultado = operationAst.operate(variaveis)
         else:
             resultado = operationAst
-        if isinstance(resultado, float) and int(resultado) == float(resultado):
+        if isinstance(resultado, list):
+            return(resultado)
+        elif isinstance(resultado, float) and int(resultado) == float(resultado):
             return(int(resultado))
         elif resultado in variaveis:
             return(variaveis[resultado].valor)

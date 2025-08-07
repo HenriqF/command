@@ -182,7 +182,8 @@ class Parser:
                         valueOp = [x for x in tokens[indexEditor+1:] if x != " "]
 
                         editNode = Edit(setwho=tokens[0], index=indexOp, setto=valueOp, mode=editMode, depth=depth, linha=[linha, i+1])
-                        editNode.index = Eval(variaveis=self.variaveis, askNode=editNode).createOperationAst(editNode.index)
+                        if editNode.index != "end":
+                            editNode.index = Eval(variaveis=self.variaveis, askNode=editNode).createOperationAst(editNode.index)
                         if valueOp != []:
                             editNode.setto = Eval(variaveis=self.variaveis, askNode=editNode).createOperationAst(editNode.setto)
                         self.nodes.append(editNode)
@@ -358,5 +359,7 @@ startTime = Time.time()
 execute(nodes=astCommands.nodes, variaveis=astCommands.variaveis, funcoes=astCommands.funcoes, nodesIndex=astCommands.indexNodes)
 execTime = Time.time()-startTime
 
+print("\n\n")
+exit(1)
 print("\nTempo de parse:", parseTime, "s")
 print("Tempo de execução:" ,execTime, "s")

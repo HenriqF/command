@@ -122,36 +122,49 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                         i = execErro(index)
                     elif isinstance(setto, Erro):
                         i = execErro(setto)
-                    elif not isinstance(index, int):
-                        i = execErro(Erro(linha=node.linha, tipo="Posição deve ser um número inteiro."))
-                    elif isinstance(environment[-1][node.setwho].valor, str) != isinstance(setto, str) and node.mode not in {"delete"}:
+                    elif index != "end":
+                        if not isinstance(index, int):
+                            i = execErro(Erro(linha=node.linha, tipo="Posição deve ser um número inteiro."))
+                        elif index != -1 and (index < 0 and abs(index) > len(environment[-1][node.setwho].valor)) or index >= len(environment[-1][node.setwho].valor):
+                            i = execErro(Erro(linha=node.linha, tipo="Posição maior que tamanho da variável."))
+                    if (isinstance(environment[-1][node.setwho].valor, str) != isinstance(setto, str)) and (node.mode in {"delete"}):
                         i = execErro(Erro(linha=node.linha, tipo="Valor deve ser também uma string."))
-                    elif (index < 0 and abs(index) > len(environment[-1][node.setwho].valor)) or index >= len(environment[-1][node.setwho].valor):
-                        i = execErro(Erro(linha=node.linha, tipo="Posição maior que tamanho da variável."))
                     else:
-                        if node.mode == "insert":
-                            if isinstance(environment[-1][node.setwho].valor, str):
-                                valor = list(environment[-1][node.setwho].valor)
-                                valor.insert(index, setto)
-                                environment[-1][node.setwho].valor = ''.join(valor)
-                            else:
-                                environment[-1][node.setwho].valor.insert(index, setto)
+                        if isinstance(setto, list):
+                            setto = setto[:]
+                        if index == "end" and node.mode not in {"insert"}:
+                            index = -1
 
-                        if node.mode == "delete":
-                            if isinstance(environment[-1][node.setwho].valor, str):
-                                valor = list(environment[-1][node.setwho].valor)
-                                del valor[index]
-                                environment[-1][node.setwho].valor = ''.join(valor)
-                            else:
-                                del environment[-1][node.setwho].valor[index]
+                        match node.mode:
+                            case "insert":
+                                if isinstance(environment[-1][node.setwho].valor, str):
+                                    valor = list(environment[-1][node.setwho].valor)
+                                    if index == "end":
+                                        valor.append(setto)
+                                    else:
+                                        valor.insert(index, setto)
+                                    environment[-1][node.setwho].valor = ''.join(valor)
+                                else:
+                                    if index == "end":
+                                        environment[-1][node.setwho].valor.append(setto)
+                                    else:
+                                        environment[-1][node.setwho].valor.insert(index, setto)
 
-                        if node.mode == "set":
-                            if isinstance(environment[-1][node.setwho].valor, str):
-                                valor = list(environment[-1][node.setwho].valor)
-                                valor[index] = setto
-                                environment[-1][node.setwho].valor = ''.join(valor)
-                            else:
-                                environment[-1][node.setwho].valor[index] = setto
+                            case "delete":
+                                if isinstance(environment[-1][node.setwho].valor, str):
+                                    valor = list(environment[-1][node.setwho].valor)
+                                    del valor[index]
+                                    environment[-1][node.setwho].valor = ''.join(valor)
+                                else:
+                                    del environment[-1][node.setwho].valor[index]
+
+                            case "set":
+                                if isinstance(environment[-1][node.setwho].valor, str):
+                                    valor = list(environment[-1][node.setwho].valor)
+                                    valor[index] = setto
+                                    environment[-1][node.setwho].valor = ''.join(valor)
+                                else:
+                                    environment[-1][node.setwho].valor[index] = setto
 
             case Show():
                 result = node.show(environment[-1])
