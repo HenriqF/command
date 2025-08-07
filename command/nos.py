@@ -63,8 +63,8 @@ class Show:
                 if content[i] in variaveis and variaveis[content[i]].valor is not None:
                     value = variaveis[content[i]].valor
                     if isinstance(value, list):
-                        print(value, end="")
-                        #return(Erro(linha=self.linha, tipo="Não é possível por no console uma lista."))
+                        #print(value, end="")
+                        return(Erro(linha=self.linha, tipo="Não é possível por no console uma lista."))
                     else:
                         print(value, end="")
                 else:

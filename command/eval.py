@@ -47,7 +47,6 @@ class Operacao:
 
         match self.operador:
             #Acesso
-
             case "@":
                 if not isinstance(esquerda, int):
                     return(Erro(linha=self.askNode.linha, tipo="O índice de acesso deve ser um inteiro."))
@@ -58,7 +57,6 @@ class Operacao:
                 if esquerda >= len(direita):
                     return(Erro(linha=self.askNode.linha, tipo="Índice maior que quantia de elementos."))
                 return(direita[esquerda])
-
 
             #Operadores unários
             case "u-":
@@ -200,7 +198,6 @@ class Eval:
                     resultado.append(token)
 
             return(resultado[0])
-
 
         if len(tokens) == 1 and isinstance(tokens[0], list):
             return(tokens[0])
