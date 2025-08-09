@@ -140,7 +140,9 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
 
                         match node.mode:
                             case "insert":
-                                if isinstance(environment[-1][node.setwho].valor, str):
+                                if isinstance(environment[-1][node.setwho].valor, dict):
+                                    i = execErro(Erro(linha=node.linha, tipo="Modo insert não pode ser usado com mapas."))
+                                elif isinstance(environment[-1][node.setwho].valor, str):
                                     valor = list(environment[-1][node.setwho].valor)
                                     if index == "end":
                                         valor.append(setto)

@@ -151,8 +151,44 @@ class Parser:
                                 Erro(linha=[linha, i+1], tipo=f"Caractere proibído em nome de variável.").parseErr()
                             if varNome in {"set", "insert", "delete"}:
                                 Erro(linha=[linha, i+1], tipo=f"Nome usado é uma palavra reservada.").parseErr()
-                            if varValor[0] == "[" and varValor[1] == "]":
-                                varValor = [[]]
+
+                            if varValor[0] == "[" and varValor[-1] == "]":
+                                varValor = varValor[1:-1]
+                                if varValor == []:
+                                    varValor = [[]]
+                                else:
+                                    valor = []
+                                    i = 1
+                                    while i < len(varValor):
+                                        if varValor[i] == ",":
+                                            valor.append(varValor[i-1])
+                                        else:
+                                            Erro(linha=[linha, i+1], tipo=f"Lista iniciada incorretamente.").parseErr()
+                                        i += 2
+                                    if i-1 < len(varValor):
+                                        valor.append(varValor[i-1])
+                                    varValor = [valor]
+
+                            if varValor[0] == "{" and varValor[-1] == "}":
+                                varValor = varValor[1:-1]
+                                if varValor == []:
+                                    varValor = [{}]
+                                else:
+                                    valor = {}
+                                    i = 4
+                                    while i < len(varValor):
+                                        if varValor[i-2] == ">" and varValor[i-3] == "-" and varValor[i] == ",":
+                                            valor[varValor[i-4]] = varValor[i-1]
+                                        else:
+                                            Erro(linha=[linha, i+1], tipo=f"Lista iniciada incorretamente.").parseErr()
+                                        i += 5
+                                    if i-1 < len(varValor):
+                                        if varValor[i-2] == ">" and varValor[i-3] == "-":
+                                            valor[varValor[i-4]] = varValor[i-1]
+                                        else:
+                                            Erro(linha=[linha, i+1], tipo=f"Lista iniciada incorretamente.").parseErr()
+                                    varValor = valor
+                                varValor = [varValor]
 
                         setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
                         setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
