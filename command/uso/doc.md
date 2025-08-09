@@ -135,6 +135,10 @@
                 insert: põe VALOR logo antes de POSICAO.
                 delete: remove o que está em POSICAO. Não precisa de VALOR.
 
+        Para variáveis do tipo mapa:
+                set: muda o que está em POSICAO para VALOR.
+                delete: remove o que está em POSICAO. Não precisa de VALOR.
+
 </details>
 
 <br>
