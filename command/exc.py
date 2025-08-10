@@ -4,8 +4,8 @@ from eval import *
 import time as Time
 
 def execute(nodes, variaveis, funcoes, nodesIndex):    
-    #for i, node in enumerate(nodes):
-        #print(i+1, ":", node)
+    # for i, node in enumerate(nodes):
+    #     print(i+1, ":", node)
     environment = [variaveis]
     lastConditionalResult = {}
     errorImmunity = []
@@ -128,7 +128,7 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                     elif index != "end":
                         if not isinstance(index, int):
                             i = execErro(Erro(linha=node.linha, tipo="Posição deve ser um número inteiro."))
-                        elif index != -1 and (index < 0 and abs(index) > len(environment[-1][node.setwho].valor)) or index >= len(environment[-1][node.setwho].valor):
+                        elif (not isinstance(environment[-1][node.setwho].valor, dict)) and (index != -1 and (index < 0 and abs(index) > len(environment[-1][node.setwho].valor)) or index >= len(environment[-1][node.setwho].valor)):
                             i = execErro(Erro(linha=node.linha, tipo="Posição maior que tamanho da variável."))
                     if (isinstance(environment[-1][node.setwho].valor, str) != isinstance(setto, str)) and (node.mode in {"delete"}):
                         i = execErro(Erro(linha=node.linha, tipo="Valor deve ser também uma string."))

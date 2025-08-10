@@ -188,7 +188,7 @@ class Parser:
                                         else:
                                             Erro(linha=[linha, i+1], tipo=f"Lista iniciada incorretamente.").parseErr()
                                     varValor = valor
-                                varValor = [varValor]
+                                    varValor = [varValor]
 
                         setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
                         setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
