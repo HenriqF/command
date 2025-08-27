@@ -107,11 +107,19 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                 i = nodesIndex[node.loopPai]-1
 
             case Setter():
-                valor = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto, variaveis=environment[-1])
-                if isinstance(valor, Erro):
-                    i = execErro(valor)
-                else:
-                    environment[-1][node.setwho].valor = valor
+                foundErrorInList = False
+                if isinstance(node.setto, list):
+                    for j in range(len(node.setto)):
+                        node.setto[j] = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto[j], variaveis=environment[-1])
+                        if isinstance(node.setto[j], Erro):
+                            i = execErro(node.setto[j])
+                            foundErrorInList = True
+                if not foundErrorInList:
+                    valor = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto, variaveis=environment[-1])
+                    if isinstance(valor, Erro):
+                        i = execErro(valor)
+                    else:
+                        environment[-1][node.setwho].valor = valor
 
             case Edit():
                 if node.setwho not in environment[-1]:

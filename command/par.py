@@ -15,7 +15,7 @@ class Parser:
         self.indexNodes = indexNodes
         self.loadedNodes = loadedNodes
 
-    def parse(self, code):
+    def parse(self, code, loaders=set()):
         linhas = [x for x in code.split("\n")]
         for i, linha in enumerate(linhas):
             if linha != "":
@@ -46,9 +46,10 @@ class Parser:
                             Erro(linha=[linha, i+1], tipo="Comando load malformado.").parseErr()
                         if not os.path.exists(f"{tokens[0]}.command"):
                             Erro(linha=[linha, i+1], tipo="Script não existe.").parseErr()
-
-
-                        loaded = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}).parse(open(f"{tokens[0]}.command").read())
+                        if tokens[0] in loaders:
+                            Erro(linha=[linha, i+1], tipo="Load circular.").parseErr()
+                        loaders.add(tokens[0])
+                        loaded = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}).parse(open(f"{tokens[0]}.command").read(), loaders=loaders)
                         for node in loaded.nodes:
                             self.nodes.append(node)
                             self.loadedNodes[node] = 0
@@ -152,52 +153,36 @@ class Parser:
                             if varNome in {"set", "insert", "delete"}:
                                 Erro(linha=[linha, i+1], tipo=f"Nome usado é uma palavra reservada.").parseErr()
 
+                            setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
+
                             if varValor[0] == "[" and varValor[-1] == "]":
                                 varValor = varValor[1:-1]
-                                if varValor == []:
-                                    varValor = [[]]
-                                else:
-                                    valor = []
-                                    i = 1
-                                    while i < len(varValor):
-                                        if varValor[i] == ",":
-                                            valor.append(varValor[i-1])
-                                        else:
-                                            Erro(linha=[linha, i+1], tipo=f"Lista iniciada incorretamente.").parseErr()
-                                        i += 2
-                                    if i-1 < len(varValor):
-                                        valor.append(varValor[i-1])
-                                    varValor = [valor]
+                                itens = []
+                                atual = []
+                                for valor in varValor:
+                                    if valor == ",":
+                                        if atual:
+                                            itens.append(Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(atual))
+                                            atual = []
+                                    else:
+                                        atual.append(valor)
+                                if atual:
+                                    itens.append(Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(atual))
 
-                            if varValor[0] == "{" and varValor[-1] == "}":
-                                varValor = varValor[1:-1]
-                                if varValor == []:
-                                    varValor = [{}]
-                                else:
-                                    valor = {}
-                                    i = 4
-                                    while i < len(varValor):
-                                        if varValor[i-2] == ">" and varValor[i-3] == "-" and varValor[i] == ",":
-                                            valor[varValor[i-4]] = varValor[i-1]
-                                        else:
-                                            Erro(linha=[linha, i+1], tipo=f"Lista iniciada incorretamente.").parseErr()
-                                        i += 5
-                                    if i-1 < len(varValor):
-                                        if varValor[i-2] == ">" and varValor[i-3] == "-":
-                                            valor[varValor[i-4]] = varValor[i-1]
-                                        else:
-                                            Erro(linha=[linha, i+1], tipo=f"Lista iniciada incorretamente.").parseErr()
-                                    varValor = valor
-                                    varValor = [varValor]
+                                varValor=itens
+                                setNode.setto = varValor
 
-                        setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
-                        setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
-                        self.nodes.append(setNode)
-
-                        if tokens[1] not in self.variaveis:
-                            varNode = Variavel(nome=varNome, valor=None, linha=[linha, i+1])
-                            self.varnodes.append(varNode)
-                            self.variaveis[varNome] = varNode
+                            elif varValor[0] == "{" and varValor[1] == "}":
+                                setNode.setto = {}
+                            
+                            else:
+                                setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
+                            self.nodes.append(setNode)
+                    
+                            if tokens[1] not in self.variaveis:
+                                varNode = Variavel(nome=varNome, valor=None, linha=[linha, i+1])
+                                self.varnodes.append(varNode)
+                                self.variaveis[varNome] = varNode
 
                     case "edit":
                         editores = {"set", "insert", "delete"}
@@ -357,11 +342,12 @@ class Parser:
                 current+=char
             elif char.isalpha():
                 current+=char
-            elif char == '`':
+            elif char == "'":
                 i+=1
-                while i < len(linha) and linha[i] != '`':
+                while i < len(linha) and linha[i] != "'":
                     current+=linha[i]
                     i+=1
+                current = "'" + current + "'"    
                 if i >= len(linha):
                     Erro(linha=[linha, pos+1], tipo="Quantia indevida de indicadores.").parseErr()
             elif char == "#":

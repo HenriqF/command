@@ -63,6 +63,7 @@ class Show:
                 if content[i] in variaveis and variaveis[content[i]].valor is not None:
                     value = variaveis[content[i]].valor
                     if isinstance(value, (list, dict)):
+                        #print(value, end="")
                         return(Erro(linha=self.linha, tipo="Não é possível por no console uma listas e/ou mapas."))
                     else:
                         print(value, end="")

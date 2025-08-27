@@ -98,19 +98,15 @@
 
         set VARIAVEL to []
 
-  Adicionalmente, a lista também pode ser criada já contendo elementos. Para isso, basta colocá-los entre os braquetes e separá-los por vírgulas. Idealmente, textos devem ser delimitados por indicadores ( ` ), embora isso nem sempre seja obrigatório.:
+  Adicionalmente, a lista também pode ser criada já contendo elementos. Para isso, basta colocá-los entre os braquetes e separá-los por vírgulas. Idealmente, textos devem ser delimitados por indicadores ( ' ), embora isso nem sempre seja obrigatório.:
 
-        set VARIAVEL to [1, texto, 13.5, `Tinha: ornintorrinco skrrr`]
+        set VARIAVEL to [1, texto, 13.5, 'Tinha: ornintorrinco skrrr']
 
   <br><br>
 
   Para criar uma variável do tipo mapa, substitui-se `VALOR`por chaves duplas, como: 
 
         set VARIAVEL to {}
-
-  Adicionalmente, o mapa também pode ser criado já contentdo elementos. Para isso, criam-se relações utilizando setas (A -> B) separadas por vírgulas. Como antes, a sugestão de indicadores para textos se aplica aqui.
-
-        set VARIAVEL to {valor1 -> 1, `valor 2` -> `amazing!`}
 
 
 

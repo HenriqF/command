@@ -34,4 +34,4 @@ set n to [2, 7, 11, 15]
 set t to 0
 while 1 
     get t -->
-    execute twosum n ts
+    execute twosum n t

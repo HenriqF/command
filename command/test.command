@@ -1,6 +1,3 @@
-load std
-set alpha to [1, 2, 3, 4]
-
-set ans to 0
-execute indexOf 4 alpha
-apply to ans
+set n to [1, 33+36, 3-3]
+set val to (-1) @n @n @n
+show val
