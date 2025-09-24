@@ -10,7 +10,7 @@
         12
         Pera
         1 + (VariavelA - VariavelB)
-        fruta + maca
+        'fruta' + 'maca'
 
 </details>
 
@@ -43,10 +43,10 @@
         < | 3 | Menor         | 10 < 5 = 0 (Retorna 1 caso (a<b), 0 caso contrário.)
         = | 3 | Igualdade     | 10 = 10 = 1 (Retorna 1 caso (a=b), 0 caso contrário.)
 
-        Nota: Se os dois primeiros comparadores (>,<) forem usados com strings,listas ou mapas, a comparação será feita com base na quantidade de caracteres / membros: 
+        Nota: Se os dois primeiros comparadores (>,<) forem usados com textos, listas ou mapas, a comparação será feita com base na quantidade de caracteres / membros: 
         
-                abc > abdc será executado como 3 > 4.
-                [1,2,3] > {abc -> 2, def ->4} será executado como 3 > 2
+                'abc' > 'abdc' será executado como 3 > 4.
+                [1,2,3] > {abc -> 2, def -> 4} será executado como 3 > 2
 
 * Parênteses:
 
@@ -101,9 +101,9 @@
 
         set VARIAVEL to []
 
-  Adicionalmente, a lista também pode ser criada já contendo elementos. Para isso, basta colocá-los entre os braquetes e separá-los por vírgulas. Idealmente, textos devem ser delimitados por indicadores ( ' ), embora isso nem sempre seja obrigatório.:
+  Adicionalmente, a lista também pode ser criada já contendo elementos. Para isso, basta colocá-los entre os braquetes e separá-los por vírgulas. 
 
-        set VARIAVEL to [1, texto, 13.5, 'Tinha: ornintorrinco skrrr']
+        set VARIAVEL to [1, 13.5, 'Tinha: ornintorrinco skrrr']
 
   <br><br>
 
@@ -195,7 +195,7 @@
         while a > 0
             set a to a-1
         elif a = 0
-            show zero!
+            show 'zero!'
 
         SAÍDA:
 
@@ -308,7 +308,7 @@
   `ARGUMENTOS` pode ser composto por texto e variáveis:
 
         set variavel to 12
-        show Numero: variavel
+        show 'Numero: 'variavel
 
         SAÍDA:
 
@@ -323,7 +323,7 @@
 
 * Este comando serve para coletar dados do console. Segue a seguinte estrutura:
 
-        get VARIAVEL TEXTO
+        get VARIAVEL 'TEXTO'
 
   `VARIAVEL` deve ser o nome de uma variável já declarada
   `TEXTO` é um argumento opicional, um texto que aparece no console quando o comando é executado.

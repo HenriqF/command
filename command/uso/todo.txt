@@ -1,0 +1,19 @@
+inicializacao de dicts.
+adicionar modo debug.
+
+RE-ESCREVER erros para ser mais explicativos.
+Criar documentação com HTML?
+
+melhorar command.py
+    -> modo para escrever código sem script
+    -> modo "ajuda"
+    -> se a extensao for .clockcom, (ou algo assim) o script inicia com modo clock
+
+PROPER built-ins
+
+LOGO melhor
+
+builtins:
+    fazer algo para trocar tipos.
+
+teoria erro : dic dentro de dic

@@ -177,6 +177,9 @@ class Parser:
                             elif varValor[0] == "{" and varValor[1] == "}":
                                 setNode.setto = {}
                             
+                            elif varValor[0] == "_" and len(varValor) == 1:
+                                setNode.setto = None
+
                             else:
                                 setNode.setto = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(setNode.setto)
                             self.nodes.append(setNode)
@@ -394,12 +397,12 @@ class Parser:
 
 def run(codigo, modo, path):
     if modo == "clock":
-        startTime = Time.time()
+        startTime = Time.perf_counter()
         astCommands = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}, path=path).parse(codigo)
-        parseTime = Time.time()-startTime
-        startTime = Time.time()
+        parseTime = Time.perf_counter()-startTime
+        startTime = Time.perf_counter()
         execute(nodes=astCommands.nodes, variaveis=astCommands.variaveis, funcoes=astCommands.funcoes, nodesIndex=astCommands.indexNodes)
-        execTime = Time.time()-startTime
+        execTime = Time.perf_counter()-startTime
         print("\n\n")
         print("\nTempo de parse:", parseTime, "s")
         print("Tempo de execução:" ,execTime, "s")

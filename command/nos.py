@@ -53,26 +53,23 @@ class Show:
         self.linha = linha
 
     def show(self, variaveis):
-        content = self.content
-
-        l = len(content)
-        i = 0 
-        while i < l:
-            if isinstance(content[i], str) and '`' in content[i]:
-                print(content[i].strip("`"), end="")
-                i += 1
-            if i < l:
-                if content[i] in variaveis and variaveis[content[i]].valor is not None:
-                    value = variaveis[content[i]].valor
-                    if isinstance(value, (list, dict)):
-                        #print(value, end="")
-                        return(Erro(linha=self.linha, tipo="Não é possível por no console uma listas e/ou mapas."))
-                    else:
-                        print(value, end="")
+        content = self.content.copy()
+        for i, c in enumerate(content):
+            if c in variaveis:
+                if not isinstance(variaveis[c].valor, (list, dict)):
+                    content[i] = variaveis[content[i]].valor
                 else:
-                    print(content[i], end="")
-                i+=1
-        print()     
+                    return(Erro(linha=self.linha, tipo="Não é possível por no console uma listas e/ou mapas."))
+        for i, c in enumerate(content):
+            if isinstance(c, (float, int)):
+                continue
+            if c is None:
+                content[i] = "nil"
+                continue
+            if len(c) > 1:
+                content[i] = c[1:-1] if c[0] == c[-1] == "'" else c
+
+        print(''.join([str(x) for x in content]))
 class Get:
     def __init__(self, content, setwho, depth, linha):
         self.content = content
@@ -81,7 +78,6 @@ class Get:
         self.linha = linha
 
     def get(self):
-
         if self.content is not None:
             got = (input(''.join(self.content)))
         else:
@@ -91,7 +87,7 @@ class Get:
             if int(got) == got:
                 got = int(got)
         except:
-            pass
+            got = "'"+got+"'"
         return(got)
 class Exit:
     def __init__(self, depth, linha):

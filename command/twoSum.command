@@ -1,9 +1,7 @@
-load std
-
 function twosum nums target
     set seen to {}
     set l to 0
-    execute length nums
+    execute objLength nums
     apply to l
 
     set i to 0
