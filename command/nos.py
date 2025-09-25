@@ -59,7 +59,7 @@ class Show:
                 if not isinstance(variaveis[c].valor, (list, dict)):
                     content[i] = variaveis[content[i]].valor
                 else:
-                    return(Erro(linha=self.linha, tipo="Não é possível por no console uma listas e/ou mapas."))
+                    return(Erro(linha=self.linha, tipo="Não é possível por no console lista e/ou mapas."))
         for i, c in enumerate(content):
             if isinstance(c, (float, int)):
                 continue

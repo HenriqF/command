@@ -5,6 +5,7 @@ funcArgs = {
     "objLength" : 1,
     "objSort" : 1,
     "showList" : 1,
+    "showMapa" : 1,
     "sumList": 1,
     "objType": 1,
     "stripAspas": 1,
@@ -33,6 +34,15 @@ def stdHandler(node, vars):
 def showList(obj):
     if isinstance(obj[0], list):
         print("[" + ' ,'.join([str(x) for x in obj[0]]) + "]")
+    else:
+        return(-1)
+
+def showMapa(obj):
+    if isinstance(obj[0], dict):
+        content = ""
+        for key in obj[0]:
+            content += f"{key} -> {obj[0][key]}, "
+        print("{",content[:-2],"}", sep="")
     else:
         return(-1)
 

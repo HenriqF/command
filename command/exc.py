@@ -114,15 +114,27 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                 i = nodesIndex[node.loopPai]-1
 
             case Setter():
-                foundErrorInList = False
+                foundErrorInData = False
+                processed = node.setto
                 if isinstance(node.setto, list):
+                    processed = []
                     for j in range(len(node.setto)):
-                        node.setto[j] = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto[j], variaveis=environment[-1])
-                        if isinstance(node.setto[j], Erro):
-                            i = execErro(node.setto[j])
-                            foundErrorInList = True
-                if not foundErrorInList:
-                    valor = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto, variaveis=environment[-1])
+                        processed.append(Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto[j], variaveis=environment[-1]))
+                        if isinstance(processed[-1], Erro):
+                            i = execErro(processed[-1])
+                            foundErrorInData = True
+
+                elif isinstance(node.setto, dict):
+                    processed = {}
+                    for key in node.setto:
+                        processedValue = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.setto[key], variaveis=environment[-1])
+                        if isinstance(processedValue, Erro):
+                            i = execErro(processedValue)
+                            foundErrorInData = True
+                        processed[key] = processedValue
+                        
+                if not foundErrorInData:
+                    valor = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=processed, variaveis=environment[-1])
                     if isinstance(valor, Erro):
                         i = execErro(valor)
                     else:

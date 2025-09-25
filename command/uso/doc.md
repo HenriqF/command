@@ -111,6 +111,10 @@
 
         set VARIAVEL to {}
 
+  Adicionalmente, como a lista, o apa pode ser criado já contendo elementos. Para isso, é usada a seguinte estrutura:
+
+        set VARIAVEL to {chave -> valor, chave2 -> valor2}
+
 
 
 

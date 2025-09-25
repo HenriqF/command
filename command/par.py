@@ -174,8 +174,39 @@ class Parser:
                                 varValor=itens
                                 setNode.setto = varValor
 
-                            elif varValor[0] == "{" and varValor[1] == "}":
-                                setNode.setto = {}
+                            elif varValor[0] == "{" and varValor[-1] == "}":
+                                if len(varValor) == 2:
+                                    setNode.setto = {}
+                                else:
+                                    varValor = varValor[1:-1]
+                                    itens = []
+                                    atual = []
+                                    mapa = {}
+
+                                    for valor in varValor:
+                                        if valor == ",":
+                                            if atual:
+                                                itens.append(atual)
+                                                atual = []
+                                        else:
+                                            atual.append(valor)
+                                    itens.append(atual)
+                                    
+                                    for item in itens:
+                                        foundArrow = False
+                                        arrowIndex = 0
+                                        for k in range(len(item)):
+                                            if item[k:k+2] == ["-",">"]:
+                                                arrowIndex = k
+                                                foundArrow = True
+                                                break
+                                        if foundArrow == False or item[:arrowIndex] == [] or item[arrowIndex+2:] == []:
+                                            Erro(linha=[linha, i+1], tipo=f"Mapa malformado.").parseErr()
+
+                                        key = ''.join([str(x) for x in item[:arrowIndex]])
+                                        value = Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(item[arrowIndex+2:])
+                                        mapa[key] = value
+                                    setNode.setto = mapa
                             
                             elif varValor[0] == "_" and len(varValor) == 1:
                                 setNode.setto = None
