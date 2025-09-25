@@ -12,6 +12,7 @@ funcArgs = {
     "indexOf": 2,
     "randomNum": 2,
 }
+
 def stdFuncs():
     return funcArgs
 
@@ -28,6 +29,12 @@ def stdHandler(node, vars):
     return result
 
 #builtins:
+
+def showList(obj):
+    if isinstance(obj[0], list):
+        print("[" + ' ,'.join([str(x) for x in obj[0]]) + "]")
+    else:
+        return(-1)
 
 def randomNum(obj):
     if isinstance(obj[0], int) and isinstance(obj[1], int):
@@ -50,12 +57,6 @@ def objSort(obj):
     else:
         return(-1)
 
-def showList(obj):
-    if isinstance(obj[0], list):
-        print("[" + ' ,'.join([str(x) for x in obj[0]]) + "]")
-    else:
-        return(-1)
-    
 def sumList(obj):
     if isinstance(obj[0], list):
         return(sum(obj[0]))

@@ -1,4 +1,4 @@
-load std
+load cmstd
 
 set correto to carro
 set length to 0

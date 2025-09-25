@@ -403,11 +403,8 @@ def run(codigo, modo, path):
         startTime = Time.perf_counter()
         execute(nodes=astCommands.nodes, variaveis=astCommands.variaveis, funcoes=astCommands.funcoes, nodesIndex=astCommands.indexNodes)
         execTime = Time.perf_counter()-startTime
-        print("\n\n")
-        print("\nTempo de parse:", parseTime, "s")
+        print("Tempo de parse:", parseTime, "s")
         print("Tempo de execução:" ,execTime, "s")
-        sys.exit(1)
     else:
         astCommands = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}, path=path).parse(codigo)
         execute(nodes=astCommands.nodes, variaveis=astCommands.variaveis, funcoes=astCommands.funcoes, nodesIndex=astCommands.indexNodes)
-        sys.exit(1)
