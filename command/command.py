@@ -1,8 +1,8 @@
 import sys
 import os
 from par import run
-version = "1.9.0"
-data = "25/09/2025"
+version = "1.9.1"
+data = "27/09/2025"
 
 def main():
     print("="*80)

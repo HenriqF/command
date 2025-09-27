@@ -1,0 +1,9 @@
+25/09/2025
+Adições:
+    * Suporte para a inicialização de mapas:
+        set var to {a -> b}
+    
+    * Funcao builtin:
+        showMapa
+
+    * Adicionada instrução "run clock" no modo "default" de execução.

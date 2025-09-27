@@ -167,7 +167,6 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                         if val[0] == val[-1] == "'":
                             environment[-1][node.setwho].valor = val[1:-1]
 
-
                     index = -1 if index == "end" and node.mode not in {"insert"} else index                        
                     match node.mode:
                         case "insert":

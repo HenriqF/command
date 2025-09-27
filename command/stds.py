@@ -14,10 +14,10 @@ funcArgs = {
     "randomNum": 2,
 }
 
-def stdFuncs():
+def stdFuncs() -> dict:
     return funcArgs
 
-def stdHandler(node, vars):
+def stdHandler(node, vars) -> any:
     if funcArgs[node.execWho] != len(node.argumentos):
         return Erro(linha=node.linha, tipo="Quantia de argumentos indevida.")
     args = []
@@ -31,35 +31,42 @@ def stdHandler(node, vars):
 
 #builtins:
 
-def showList(obj):
+def showList(obj: any) -> int:
+    """Mostra uma lista, retorna -1 em caso de erro."""
     if isinstance(obj[0], list):
         print("[" + ' ,'.join([str(x) for x in obj[0]]) + "]")
+        return 1
     else:
         return(-1)
 
-def showMapa(obj):
+def showMapa(obj: any) -> int:
+    """Mostra um mapa, retorna -1 em caso de erro."""
     if isinstance(obj[0], dict):
         content = ""
         for key in obj[0]:
             content += f"{key} -> {obj[0][key]}, "
         print("{",content[:-2],"}", sep="")
+        return 1
     else:
         return(-1)
 
-def randomNum(obj):
+def randomNum(obj: any) -> int:
+    """Gera um número aleatório dentro do intervalo determinado. retorna -1 em caso de erro."""
     if isinstance(obj[0], int) and isinstance(obj[1], int):
         if obj[0] < obj[1]:
             return(random.randint(obj[0], obj[1]))
         return(-1)
     return(-1)
 
-def objLength(obj):
+def objLength(obj: any) -> int:
+    """Mostra o comprimento de um objeto (texto, lista ou mapa), retorna -1 em caso de erro."""
     if isinstance(obj[0], (str,list,dict)):
         return(len(obj[0]))
     else:
         return(-1)
     
-def objSort(obj):
+def objSort(obj: any) -> list | str | int:
+    """Organiza um objeto (seja lista ou texto), retorna -1 em caso de erro."""
     if isinstance(obj[0], list):
         return(sorted(obj[0]))
     elif isinstance(obj[0], str):
@@ -67,19 +74,22 @@ def objSort(obj):
     else:
         return(-1)
 
-def sumList(obj):
+def sumList(obj: any) -> int:
+    """Retorna a soma dos itens de uma lista, retorna -1 em caso de erro."""
     if isinstance(obj[0], list):
         return(sum(obj[0]))
     else:
         return(-1)
     
-def objType(obj):
+def objType(obj: any) -> str:
+    """Retorna o tipo do objeto"""
     tipos = {int:"num",float:"num",str:"str",list:"lst",dict:"dic"}
     if obj[0] == None:
         return("nil")
     return(tipos[type(obj[0])])
 
-def indexOf(obj):
+def indexOf(obj: any) -> int:
+    """Mostra onde argumento 0 está em argumento 1, retorna -1 em caso de erro."""
     if not(isinstance(obj[1], (list,str))):
         return(-1)
     try:
@@ -87,7 +97,8 @@ def indexOf(obj):
     except:
         return(-1)
     
-def stripAspas(obj):
+def stripAspas(obj: any) -> str | int:
+    """Remove aspas simples das pontas de um texto, retorna -1 em caso de erro."""
     if isinstance(obj[0], str):
         if len(obj[0]) > 1 and obj[0][0] == obj[0][-1] == "'":
             copy = obj[0][:]

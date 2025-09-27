@@ -1,0 +1,22 @@
+24/09/2025
+Adições:
+    * suporte para a criação variaveis nulas:
+        set var to _
+
+    * funcoes builtin:
+        showList
+        randomNum
+        objLength
+        objSort
+        sumList
+        objType
+        indexOf
+        stripAspas
+
+    * modo "default" de execução do programa, para escrever código sem script salvo.
+
+Bugs e otimizações:
+    * Resolvido interação do comando show com erros.
+    * Resolvido interação do comando get com inputs.
+    * Melhorada a detecção de erros do eval.
+    * Melhorada a detecção de erros do comando edit.
