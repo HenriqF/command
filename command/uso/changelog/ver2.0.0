@@ -1,0 +1,24 @@
+28/09/2025
+
+Adições:
+    funcoes BUILT-IN:
+        set
+        insert
+        delete
+        add
+
+    Modo editor:
+        erros não mais causarão a parada da execução do aplicativo
+        formatação de linhas melhorada.
+
+Remoções:
+    Comando EDIT
+    Checagem de palavras reservadas "set", "insert", "delete" no parsing do comando set.
+
+Alterações:
+    Comando execute agora toma como argumento uma lista.
+
+    funcoes Built-in:
+        Formatação da funcao showList foi alterada.
+
+    funcao built-in "showMapa" agora é "showMap"

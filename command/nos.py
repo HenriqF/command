@@ -32,14 +32,6 @@ class Conditional(TemCorpo):
     pass
 
 #Comandos
-class Edit:
-    def __init__(self, setwho: str, index: int, setto: any, mode: str, depth: int, linha: list) -> None:
-        self.setwho = setwho
-        self.index = index
-        self.setto = setto
-        self.mode = mode
-        self.depth = depth
-        self.linha = linha
 class Setter:
     def __init__(self, setwho: str, setto: any, depth: int, linha: list) -> None:
         self.setwho = setwho

@@ -120,30 +120,6 @@
 
 </details>
 
-<details>
-<summary>Comando <b>edit</b></summary>
-
-* Este comando serve para modificar uma posição de uma variável de tipo sequencial ou associativo (listas, mapas, strings...), segue a seguinte estrutura:
-
-        edit VARIAVEL at POSICAO MODO VALOR
-
-  `POSICAO` é uma [operação](#operações). Representa o lugar dentro de `VARIAVEL` que será editado. Pode-se usar `end` para declarar que a posição editada é a ultima. <br>
-  `VARIAVEL` é o nome da variável a ser editada.<br>
-  `VALOR` também é uma [operação](#operações). Representa o que será posto em `POSICAO`
-
-  `MODO` deve ser um dos seguintes:
-
-        Para variáveis do tipo lista e string:
-                set   : muda o que está em POSICAO para VALOR.   
-                insert: põe VALOR logo antes de POSICAO.
-                delete: remove o que está em POSICAO. Não precisa de VALOR.
-
-        Para variáveis do tipo mapa:
-                set: muda o que está em POSICAO para VALOR.
-                delete: remove o que está em POSICAO. Não precisa de VALOR.
-
-</details>
-
 <br>
 
 # Condicionais
@@ -272,15 +248,15 @@
 
 * Este comando é usado para executar uma função, segue a seguinte estrutura:
 
-        execute NOMEFUNCAO VARIAVEIS
+        execute NOMEFUNCAO [VARIAVEIS]
 
   `NOMEFUNCAO` deve referenciar uma função.<br>
-  `VARIAVEIS` são os valores de entrada solicitados pela função chamada. Exemplo:
+  `VARIAVEIS` é uma lista de valores de entrada solicitados pela função chamada. Exemplo:
 
         function soma x y
             result x + y
 
-        execute soma 10 20            
+        execute soma [10, 20]           
 
 
 </details>
@@ -296,6 +272,41 @@
         apply to VARIAVEL
 
   Caso `FUNCAO` retorne algo, o valor retornado será armazenado em `VARIAVEL`.
+
+</details>
+
+
+<details>
+<summary>Funções <b> built-in </b></summary>
+
+* São funções que vem com todo script .command. Exemplo:
+
+        set a to [1,2,3,4]
+        execute showList [a]
+
+        SAÍDA:
+
+        [1, 2, 3, 4]
+
+* Por padrão, retoram "-1" em caso de erros.
+
+* Lista de built-ins:
+
+        objLength -> Mostra o comprimento de uma lista/ texto/ mapa.
+        objSort   -> Organiza uma lista/ texto.
+        showList  -> Põe no console o conteúdo de uma lista.
+        showMap   -> Põe no console o conteúdo de um mapa.
+        sumList   -> Mostra a soma do conteúdo de uma lista.
+        objType   -> Mostra o tipo de dado do objeto.
+        stripMarc -> Tira tira marcadores de um texto.
+        indexOf   -> Mostra onde que o primeiro argumento está dentro do segundo.
+        randomNum -> Gera um número aleatório inteiro entre argumento 0 e 1.
+        add       -> Adiciona ao fim de uma lista / texto (primeiro arg) o conteudo do segundo argumento.
+        delete    -> Deleta de uma lista/texto/dicionario (primeiro arg) a posição "segundo argumento".
+        set       -> Altera o valor da posição "segundo argumento" dentro do mapa/lista/texto "primeiro argumento" para "terceiro argumento"
+        insert    -> Insere na posição "segundo argumento" dentro do mapa/lista/texto "primeiro argumento" o conteúdo de "terceiro argumento"
+        
+
 
 </details>
 <br>

@@ -16,6 +16,20 @@ class Parser:
         self.loadedNodes = loadedNodes
         self.path = path
 
+    def createList(self, tokens: list, node: object) -> list:
+        itens = []
+        atual = []
+        for valor in tokens:
+            if valor == ",":
+                if atual:
+                    itens.append(Eval(variaveis=self.variaveis, askNode=node).createOperationAst(atual))
+                    atual = []
+            else:
+                atual.append(valor)
+        if atual:
+            itens.append(Eval(variaveis=self.variaveis, askNode=node).createOperationAst(atual))
+        return itens
+
     def parse(self, code, loaders=set()):
         linhas = [x for x in code.split("\n")]
         for i, linha in enumerate(linhas):
@@ -101,10 +115,12 @@ class Parser:
                         argumentos = None
                         if len(tokens) == 0:
                             Erro(linha=[linha, i+1], tipo="Execute sem nome.").parseErr()
-                        if len(tokens) > 1:
-                            argumentos = tokens[1:]
 
-                        self.nodes.append(Execute(execWho=tokens[0], argumentos=argumentos, valor=None, depth=depth, linha=[linha, i+1]))
+                        executeNode = Execute(execWho=tokens[0], argumentos=None, valor=None, depth=depth, linha=[linha, i+1])
+                        if len(tokens) > 1:
+                            argumentos = (self.createList(tokens=tokens[2:-1], node=executeNode))
+                        executeNode.argumentos = argumentos
+                        self.nodes.append(executeNode)
 
                     case "apply":
                         tokens = tokens[2:]
@@ -152,27 +168,12 @@ class Parser:
                             varValor = [x for x in tokens[4:] if x != " "]
                             if any(not char.isalpha() for char in varNome):
                                 Erro(linha=[linha, i+1], tipo=f"Caractere proibído em nome de variável.").parseErr()
-                            if varNome in {"set", "insert", "delete"}:
-                                Erro(linha=[linha, i+1], tipo=f"Nome usado é uma palavra reservada.").parseErr()
 
                             setNode = (Setter(setwho=varNome, setto=varValor, depth=depth, linha=[linha, i+1]))
 
                             if varValor[0] == "[" and varValor[-1] == "]":
-                                varValor = varValor[1:-1]
-                                itens = []
-                                atual = []
-                                for valor in varValor:
-                                    if valor == ",":
-                                        if atual:
-                                            itens.append(Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(atual))
-                                            atual = []
-                                    else:
-                                        atual.append(valor)
-                                if atual:
-                                    itens.append(Eval(variaveis=self.variaveis, askNode=setNode).createOperationAst(atual))
-
-                                varValor=itens
-                                setNode.setto = varValor
+                                varValor = varValor[1:-1]                                
+                                setNode.setto = self.createList(tokens=varValor, node=setNode)
 
                             elif varValor[0] == "{" and varValor[-1] == "}":
                                 if len(varValor) == 2:
@@ -219,31 +220,6 @@ class Parser:
                                 varNode = Variavel(nome=varNome, valor=None, linha=[linha, i+1])
                                 self.varnodes.append(varNode)
                                 self.variaveis[varNome] = varNode
-
-                    case "edit":
-                        editores = {"set", "insert", "delete"}
-                        tokens = tokens[2:]
-                        if tokens[1:4] != [" ","at"," "]:
-                            Erro(linha=[linha, i+1], tipo="Comando edit malformado.").parseErr()
-                        
-                        indexEditor = -1
-                        editMode = None
-                        for editor in editores:
-                            if editor in tokens[4:]:
-                                indexEditor = tokens[4:].index(editor)+4   
-                                editMode = editor
-                        if indexEditor < 0:
-                            Erro(linha=[linha, i+1], tipo="Comando edit sem modo de edição.").parseErr()
-
-                        indexOp = [x for x in tokens[3:indexEditor] if x != " "]
-                        valueOp = [x for x in tokens[indexEditor+1:] if x != " "]
-
-                        editNode = Edit(setwho=tokens[0], index=indexOp, setto=valueOp, mode=editMode, depth=depth, linha=[linha, i+1])
-                        if editNode.index != "end":
-                            editNode.index = Eval(variaveis=self.variaveis, askNode=editNode).createOperationAst(editNode.index)
-                        if valueOp != []:
-                            editNode.setto = Eval(variaveis=self.variaveis, askNode=editNode).createOperationAst(editNode.setto)
-                        self.nodes.append(editNode)
 
                     case "show":
                         if " " in tokens:

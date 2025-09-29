@@ -1,10 +1,10 @@
 import sys
 import os
 from par import run
-version = "1.9.1"
-data = "27/09/2025"
+version = "2.0.0"
+data = "28/09/2025"
 
-def main():
+def main() -> None:
     print("="*80)
     print(f"Command {version} - {data}")
     if len(sys.argv) <= 1:
@@ -12,10 +12,13 @@ def main():
         line = 1
         codigo = ""
         while 1:
-            newLine = input(f"{line} - ")
+            newLine = input(f"{line:<3} - ")
             if newLine[:3] == "run":
                 modo = "clock" if newLine[3:9] == " clock" else ""
-                run(codigo, modo, "\\")
+                try:
+                    run(codigo, modo, "\\")
+                except SystemExit as e:
+                    pass
                 codigo = ""
                 line = 1
             else:
