@@ -1,0 +1,15 @@
+30/09/2025
+
+Modificações:
+    Bugs resolvidos:
+        Inconsistencia de como o comando execute lidava com funcoes do script e built-ins.
+
+        Se o primeiro comando após o término de uma função fosse uma variavel, ela seria injetada ao environment da funcao:
+            function inc n
+                result n+1
+            set a to _
+            Neste caso, a ia para o environment de "inc", ficando como "n, a" ao invés de só "n".
+    
+    Logo alterada.
+
+    Agora, se o nome da extensão de um script for .ccommand, o interpretador cronometrará o tempo de execução.

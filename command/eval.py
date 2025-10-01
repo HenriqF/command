@@ -70,7 +70,6 @@ class Operacao:
                         return(Erro(linha=self.askNode.linha, tipo="Elemento fora do mapa."))
                 return(direita[esquerda])
 
-
             #Operadores unários
             case "u-":
                 return(direita * -1)

@@ -25,15 +25,9 @@ funcArgs = {
 def stdFuncs() -> dict:
     return funcArgs
 
-def stdHandler(node, vars) -> any:
+def stdHandler(node, vars, args) -> any:
     if funcArgs[node.execWho] != len(node.argumentos):
         return Erro(linha=node.linha, tipo="Quantia de argumentos indevida.")
-    args = []
-    for arg in node.argumentos:
-        if arg in vars:
-            args.append(vars[arg].valor)
-        else:
-            args.append(arg)
     result = globals()[node.execWho](args)
     return result
 

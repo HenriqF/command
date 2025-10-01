@@ -4,7 +4,7 @@ from eval import *
 from stds import stdFuncs, stdHandler
 import time as Time
 
-def execute(nodes, variaveis, funcoes, nodesIndex):    
+def execute(nodes, variaveis, funcoes, nodesIndex):
     environment = [variaveis]
     lastConditionalResult = {}
     errorImmunity = []
@@ -61,7 +61,9 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                 if not nodeArgumentosExist:
                     args = []
                     for arg in node.argumentos:
-                        if isinstance(arg, Operacao):
+                        if arg in environment[-1]:
+                            args.append(environment[-1][arg].valor)
+                        elif isinstance(arg, Operacao):
                             args.append(Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=arg, variaveis=environment[-1]))
                             if isinstance(args[-1], Erro):
                                 i = execErro(args[-1])
@@ -75,7 +77,7 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                 if not foundErrorInArgs:
                     if node.execWho not in funcoes:
                         if node.execWho in stdFuncs():
-                            result = stdHandler(node, environment[-1])
+                            result = stdHandler(node, environment[-1], args)
                             if isinstance(result, Erro):
                                 i = execErro(result)
                             else:
@@ -90,14 +92,15 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                         i = execErro(Erro(linha=node.linha, tipo="Quantia de argumentos indevida."))
                     else:
                         newEnv = {}
-                        for env in funcoes[node.execWho].environment:
-                            newEnv[env] = funcoes[node.execWho].environment[env].copy()
+                        for var in funcoes[node.execWho].environment:
+                            newEnv[var] = funcoes[node.execWho].environment[var].copy()
                         if args is not None:
                             for i, var in enumerate(funcoes[node.execWho].argumentos):
                                 if args[i] in environment[-1]:
                                     newEnv[var].valor = environment[-1][args[i]].valor
                                 else:
                                     newEnv[var].valor = args[i]
+
                         environment.append(newEnv)
                         funcoes[node.execWho].caller.append(node)
                         i = nodesIndex[funcoes[node.execWho].corpo]-1

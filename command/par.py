@@ -94,7 +94,6 @@ class Parser:
                                     self.variaveis[var] = varNode
                                 if var not in environment:
                                     environment[var] = varNode
-
                         funcNode = (Function(nome=tokens[0], argumentos=argumentos, corpo=None, fim=None, environment=environment, caller=[], depth=depth, linha=[linha, i+1]))
                         if funcNode.nome in self.funcoes:
                             Erro(linha=[linha, i+1], tipo="Uma função com tal nome já existe.").parseErr()
@@ -264,6 +263,7 @@ class Parser:
         return self
     
     def meaningParse(self):
+        
         def handleFunction(i, node):
             if isinstance(self.nodes[i], Setter):
                 return(self.variaveis[self.nodes[i].setwho])
@@ -287,24 +287,27 @@ class Parser:
                             result = handleFunction(i+1, self.nodes[i])
                             if result is not None:
                                 funcEnvironment[self.nodes[i+1].setwho] = result
-
-                        if isinstance(self.nodes[i] , Loop) and isinstance(self.nodes[i+1], BreakLoop) and (self.nodes[i+1].depth > nodeDepth): 
+                            
+                        elif isinstance(self.nodes[i] , Loop) and isinstance(self.nodes[i+1], BreakLoop) and (self.nodes[i+1].depth > nodeDepth): 
                             self.nodes[i+1].loopPai = self.nodes[i]
 
                         self.nodes[i].corpo = self.nodes[i+1]
                         j = i+2
                         while j < nodeCount:
-                            if isinstance(self.nodes[i], Function):
-                                result = handleFunction(j, self.nodes[i])
-                                if result is not None:
-                                    funcEnvironment[self.nodes[j].setwho] = result
-                            if isinstance(self.nodes[i] , Loop) and isinstance(self.nodes[j], BreakLoop) and (self.nodes[j].depth > nodeDepth): 
-                                self.nodes[j].loopPai = self.nodes[i]
-
                             if self.nodes[j].depth <= nodeDepth:
                                 self.nodes[i].fim = self.nodes[j-1]
                                 break
+
+                            elif isinstance(self.nodes[i], Function):
+                                result = handleFunction(j, self.nodes[i])
+                                if result is not None:
+                                    funcEnvironment[self.nodes[j].setwho] = result
+
+                            elif isinstance(self.nodes[i] , Loop) and isinstance(self.nodes[j], BreakLoop) and (self.nodes[j].depth > nodeDepth): 
+                                self.nodes[j].loopPai = self.nodes[i]
+
                             j += 1
+                        
                         if isinstance(self.nodes[i], Function):
                             self.nodes[i].environment = funcEnvironment
 
@@ -341,11 +344,12 @@ class Parser:
                     nodeCount+=1
 
                 elif isinstance(self.nodes[i], Function):
-                    if not isinstance(self.nodes[i].fim, Result):
+                    if not isinstance(self.nodes[i].fim, Result): 
                         endNodeIndex = self.nodes.index(self.nodes[i].fim)+1
                         self.nodes.insert(endNodeIndex, Result(retorno=None, valor=None, funcaoPai=self.nodes[i].nome, depth=self.nodes[i].depth, linha=None))
                         self.nodes[i].fim = self.nodes[endNodeIndex]
                         nodeCount+=1
+
             i += 1
 
         for i, node in enumerate(self.nodes):
@@ -404,13 +408,10 @@ class Parser:
 
 def run(codigo, modo, path):
     if modo == "clock":
-        startTime = Time.perf_counter()
         astCommands = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}, path=path).parse(codigo)
-        parseTime = Time.perf_counter()-startTime
         startTime = Time.perf_counter()
         execute(nodes=astCommands.nodes, variaveis=astCommands.variaveis, funcoes=astCommands.funcoes, nodesIndex=astCommands.indexNodes)
         execTime = Time.perf_counter()-startTime
-        print("Tempo de parse:", parseTime, "s")
         print("Tempo de execução:" ,execTime, "s")
     else:
         astCommands = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}, path=path).parse(codigo)

@@ -1,8 +1,8 @@
 import sys
 import os
 from par import run
-version = "2.0.0"
-data = "28/09/2025"
+version = "2.0.1"
+data = "30/09/2025"
 
 def main() -> None:
     print("="*80)
@@ -34,9 +34,11 @@ def main() -> None:
 
     else:
         nome = sys.argv[1]
-        modo = sys.argv[2] if len(sys.argv) > 2 else "clock"
-        if ".command" != nome[-8:]:
-            print("tipo de arquivo errado! O script deve ser .command!")
+        modo = sys.argv[2] if len(sys.argv) > 2 else "normal"
+        if nome.endswith(".ccommand"):
+            modo = "clock"
+        elif not nome.endswith(".command"):
+            print("tipo de arquivo errado! O script deve ser .command ou .ccommand!")
             sys.exit(1)
         try:
             path = os.path.dirname(os.path.abspath(nome))
@@ -45,7 +47,6 @@ def main() -> None:
         except:
             print("Esse arquivo não existe!")
             sys.exit(1)
-
         run(codigo, modo, path)
         sys.exit(1)
 
