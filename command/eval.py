@@ -47,9 +47,9 @@ class Operacao:
         
         te = self.tipo(esquerda)
         td = self.tipo(direita)
-        if te != td and self.operador not in {"*","@",">","<","=","u-","!"}:
+        if te != td and self.operador not in {"*","@","$",">","<","=","u-","!"}:
             return(Erro(linha=self.askNode.linha, tipo=f'Operador "{self.operador}" não pode ser usado com tipos diferentes.'))
-        if self.operador in {"~","|","&",">","<","=","+","-","*","/","%","^","@"} and (te == "nil" or td == "nil"):
+        if self.operador in {"~","|","&",">","<","=","+","-","*","/","%","^","@","$"} and (te == "nil" or td == "nil"):
             return(Erro(linha=self.askNode.linha, tipo=f'Operador "{self.operador}" não pode ser usado com tipo nulo.'))
         if self.operador in {"!","u-"} and td == "nil":
             return(Erro(linha=self.askNode.linha, tipo=f'Operador "{self.operador}" não pode ser usado com tipo nulo.'))
@@ -69,6 +69,15 @@ class Operacao:
                     elif esquerda not in direita:
                         return(Erro(linha=self.askNode.linha, tipo="Elemento fora do mapa."))
                 return(direita[esquerda])
+            case "$":
+                if isinstance(direita, (int, float)):
+                    return(Erro(linha=self.askNode.linha, tipo="Variável acessada deve ser posicional."))
+                if isinstance(direita, str) and not isinstance(esquerda, str):
+                    return(Erro(linha=self.askNode.linha, tipo="Ambos operandos devem ser strings."))
+                if esquerda in direita:
+                    return 1
+                else:
+                    return 0
 
             #Operadores unários
             case "u-":
@@ -145,9 +154,9 @@ class Eval:
                       "*":5,"/":5,"%":5,
                       "^":6,
                       "!":7,"u-":7,
-                      "@":8
+                      "@":8,"$":8
                       }
-        self.binario = {"~","|","&",">","<","=","+","-","*","/","%","^","@"}
+        self.binario = {"~","|","&",">","<","=","+","-","*","/","%","^","@","$"}
         self.unario = {"!","u-"}
 
     def createOperationAst(self, operation):

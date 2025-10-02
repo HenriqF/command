@@ -128,6 +128,13 @@ class Parser:
                             Erro(linha=[linha, i+1], tipo="Comando apply malformado.").parseErr()
                         self.nodes.append(Apply(variavel=tokens[2], depth=depth, linha=[linha, i+1]))
 
+                    case "adopt":
+                        tokens = tokens[2:]
+
+                        if len([x for x in tokens if x != " "]) != 1:
+                            Erro(linha=[linha, i+1], tipo="Comando adopt malformado.").parseErr()
+                        self.nodes.append(Adopt(variavel=tokens[0], depth=depth, linha=[linha, i+1]))
+
                     case "while":
                         tokens = [x for x in tokens if x != " "] 
                         if 1 >= len(tokens):
@@ -263,7 +270,6 @@ class Parser:
         return self
     
     def meaningParse(self):
-        
         def handleFunction(i, node):
             if isinstance(self.nodes[i], Setter):
                 return(self.variaveis[self.nodes[i].setwho])

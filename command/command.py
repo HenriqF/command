@@ -1,14 +1,14 @@
 import sys
 import os
 from par import run
-version = "2.0.1"
-data = "30/09/2025"
+version = "2.1.0"
+data = "01/10/2025"
 
 def main() -> None:
     print("="*80)
     print(f"Command {version} - {data}")
     if len(sys.argv) <= 1:
-        print(f"Use 'run' para executar o script, 'run clock' para cronometar o tempo de execução.")
+        print(f"Use 'run' para executar o script, 'run clock' para cronometar o tempo de execução, 'quit' para sair.")
         line = 1
         codigo = ""
         while 1:
@@ -21,6 +21,8 @@ def main() -> None:
                     pass
                 codigo = ""
                 line = 1
+            elif newLine == "quit":
+                sys.exit(1)
             else:
                 processNewLine = []
                 for char in newLine:
@@ -53,5 +55,8 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
+    except SystemExit:
+        raise 
     except:
+       print("\nUm erro ocorreu.")
        sys.exit(1)

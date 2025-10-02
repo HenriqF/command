@@ -57,7 +57,7 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
             case Execute():
                 nodeArgumentosExist = node.argumentos is None
                 foundErrorInArgs = False
-
+                args = None
                 if not nodeArgumentosExist:
                     args = []
                     for arg in node.argumentos:
@@ -94,6 +94,7 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                         newEnv = {}
                         for var in funcoes[node.execWho].environment:
                             newEnv[var] = funcoes[node.execWho].environment[var].copy()
+                            newEnv[var].valor = None
                         if args is not None:
                             for i, var in enumerate(funcoes[node.execWho].argumentos):
                                 if args[i] in environment[-1]:
@@ -114,6 +115,13 @@ def execute(nodes, variaveis, funcoes, nodesIndex):
                 else:
                     if nodes[prevIndex].valor is not None:
                         environment[-1][node.variavel].valor = nodes[prevIndex].valor
+
+            case Adopt():
+                if node.variavel not in environment[0]:
+                    i = execErro(Erro(linha=node.linha, tipo="Tentativa de adopt com variavel fora do escopo global."))
+                else:
+                    environment[-1][node.variavel] = environment[0][node.variavel]
+                pass
 
             case WhileLoop():
                 sucessoCondicional = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=node.pergunta, variaveis=environment[-1])

@@ -1,0 +1,24 @@
+01/10/2025
+
+Adições:
+    Comando "adopt", serve para colocar no escopo atual de variaveis uma variavel do escopo global:
+
+        set valor to 10
+        function incremento
+            adopt valor
+            set valor to valor+1
+
+        execute incremento
+        show valor
+
+        SAÍDA:
+
+        11
+
+    Operador "$" -> similar a "@", serve para conferir se x está em y : x$y
+
+Modificações:
+    Bugs resolvidos:
+        Comando execute agora funciona em caso que funcao nao pede argumentos.
+    Documentação.
+    Leves aprimorações no editor de código.

@@ -35,7 +35,8 @@
         % | 5 | Módulo        | 2 % 2 = 0
         ^ | 6 | Potência      | 5 ^ 3 = 125
         ~ | 0 | Arredondação  | 0~10.6 = 11 (a ~ b → arredonda o número a com b casas decimais)
-        @ | 8 | Posição       | i @ x → Selecionará e corresponderá à posição "i" de uma variável x.  
+        @ | 8 | Posição       | i @ x -> Selecionará e corresponderá à posição "i" de uma variável x.
+        $ | 8 | Dentro        | i $ x -> Responderá com 1 caso i esteja dentro de x. 0 caso contrário.
 
 * Comparadores:
 
@@ -272,6 +273,28 @@
         apply to VARIAVEL
 
   Caso `FUNCAO` retorne algo, o valor retornado será armazenado em `VARIAVEL`.
+
+</details>
+
+
+<details>
+<summary>Comando <b> adopt </b> </summary>
+
+* Este comando serve para pegar uma variável do escopo global e colocar no escopo local. Exemplo:
+
+        set valor to 10
+        function incremento
+            adopt valor
+            set valor to valor+1
+
+        execute incremento
+        show valor
+
+        SAÍDA:
+
+        11
+
+* Variáveis do escopo global são aquelas definidas fora de qualquer função.
 
 </details>
 

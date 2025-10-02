@@ -133,6 +133,12 @@ class Apply:
         self.variavel = variavel
         self.depth = depth
         self.linha = linha
+class Adopt:
+    def __init__ (self, variavel: str, depth: int, linha: list) -> None:
+        self.variavel = variavel
+        self.depth = depth
+        self.linha = linha
+
 
 #Loops
 class WhileLoop(Loop):
