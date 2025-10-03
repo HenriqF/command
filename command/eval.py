@@ -231,14 +231,11 @@ class Eval:
     def executeAst(self, operationAst, variaveis):
         if isinstance(operationAst, (list, dict)):
             return(operationAst)
+        resultado = operationAst
         if isinstance(operationAst, Operacao):
             resultado = operationAst.operate(variaveis)
-        else:
-            resultado = operationAst
-        if isinstance(resultado, (list, dict)):
-            return(resultado)
+        if resultado in variaveis:
+            return(variaveis[resultado].valor)
         elif isinstance(resultado, float) and int(resultado) == float(resultado):
             return(int(resultado))
-        elif resultado in variaveis:
-            return(variaveis[resultado].valor)
         return(resultado)

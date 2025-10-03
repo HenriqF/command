@@ -124,6 +124,13 @@ def add(obj: any) -> list | str:
 def showList(obj: any) -> int:
     """Mostra uma lista, retorna -1 em caso de erro."""
     if isinstance(obj[0], list):
+        for i in range(len(obj[0])):
+            val = obj[0][i]
+            if isinstance(val, dict):
+                obj[0][i] = "{map}"
+            elif isinstance(val, list):
+                obj[0][i]= "[list]"
+
         print("[" + ', '.join([str(x) for x in obj[0]]) + "]")
         return 1
     else:
@@ -134,7 +141,13 @@ def showMap(obj: any) -> int:
     if isinstance(obj[0], dict):
         content = ""
         for key in obj[0]:
-            content += f"{key} -> {obj[0][key]}, "
+            val = obj[0][key]
+            if isinstance(val, dict):
+                val = "{map}"
+            elif isinstance(val, list):
+                val = "[list]"
+
+            content += f"{key} -> {val}, "
         print("{",content[:-2],"}", sep="")
         return 1
     else:
