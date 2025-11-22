@@ -121,7 +121,6 @@ def execute(nodes: list, variaveis: dict, funcoes: dict, nodesIndex: dict) -> No
                     nodePos = execErro(Erro(linha=node.linha, tipo="Tentativa de adopt com variavel fora do escopo global."))
                 else:
                     environment[-1][node.variavel] = environment[0][node.variavel]
-                pass
 
             case WhileLoop():
                 sucessoCondicional = evaluate(node, node.pergunta)

@@ -413,7 +413,6 @@ class Parser:
         return(tokens)
 
 def run(codigo, modo, path):
-    modo = "clock"
     if modo == "clock":
         astCommands = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}, path=path).parse(codigo)
         startTime = Time.perf_counter()
