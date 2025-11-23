@@ -1,8 +1,8 @@
 import sys
 import os
 from par import run
-version = "2.1.2"
-data = "21/11/2025"
+version = "2.2.0"
+data = "22/11/2025"
 
 def editor() -> None:
     print(f"Command {version} - {data} ")
@@ -20,10 +20,11 @@ def editor() -> None:
         elif newLine == "ajuda":
             print("\nDigite run para executar o script.")
             print("Digite forget para limpar o script atual.")
-            print("Para sair, digite quit ou use Control+C")
+            print("Para sair, digite sair ou use Control+C")
         elif newLine == "forget":
-            codigo = []
-        elif newLine == "quit":
+            if codigo:
+                codigo.pop()
+        elif newLine == "sair":
             break
         else:
             newLine = newLine.expandtabs(4)

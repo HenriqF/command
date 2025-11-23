@@ -7,7 +7,7 @@ import time as Time
 sys.set_int_max_str_digits(2147483647)
 
 class Parser:
-    def __init__(self, varnodes, nodes, variaveis, funcoes, indexNodes, loadedNodes, path):
+    def __init__(self, varnodes: list, nodes: list, variaveis: dict, funcoes: dict, indexNodes: dict, loadedNodes: dict, path: str, execMode: str):
         self.varnodes = varnodes
         self.nodes = nodes
         self.variaveis = variaveis
@@ -15,6 +15,7 @@ class Parser:
         self.indexNodes = indexNodes
         self.loadedNodes = loadedNodes
         self.path = path
+        self.execMode = execMode
 
     def createList(self, tokens: list, node: object) -> list:
         itens = []
@@ -35,13 +36,14 @@ class Parser:
         for i, linha in enumerate(linhas):
             if linha != "":
                 tokens = self.getTokens(linha, i)
-                if not tokens:
+                if len(tokens) < 2:
                     continue
                 depth = tokens.pop(0)
-                if not tokens:
-                    continue
 
                 match tokens[0]:
+                    case "debug":
+                        self.execMode = "debug"
+
                     case "check":
                         tokens = tokens[2:]
                     
@@ -413,12 +415,9 @@ class Parser:
         return(tokens)
 
 def run(codigo, modo, path):
+    astCommands = Parser(varnodes=[], nodes=[], variaveis={}, funcoes={}, indexNodes={}, loadedNodes={}, path=path, execMode="").parse(codigo)
+
+    startTime = Time.perf_counter()
+    execute(nodes=astCommands.nodes, variaveis=astCommands.variaveis, funcoes=astCommands.funcoes, nodesIndex=astCommands.indexNodes, modo=astCommands.execMode)
     if modo == "clock":
-        astCommands = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}, path=path).parse(codigo)
-        startTime = Time.perf_counter()
-        execute(nodes=astCommands.nodes, variaveis=astCommands.variaveis, funcoes=astCommands.funcoes, nodesIndex=astCommands.indexNodes)
-        execTime = Time.perf_counter()-startTime
-        print("Tempo de execução:" ,execTime, "s")
-    else:
-        astCommands = Parser(varnodes=[], nodes=[],variaveis={},funcoes={}, indexNodes={}, loadedNodes={}, path=path).parse(codigo)
-        execute(nodes=astCommands.nodes, variaveis=astCommands.variaveis, funcoes=astCommands.funcoes, nodesIndex=astCommands.indexNodes)
+        print(f"Tempo de execução: {Time.perf_counter()-startTime}s")

@@ -2,10 +2,11 @@ from nos import *
 from eval import *
 from stds import stdFuncs, stdHandler
 
-def execute(nodes: list, variaveis: dict, funcoes: dict, nodesIndex: dict) -> None:
+def execute(nodes: list, variaveis: dict, funcoes: dict, nodesIndex: dict, modo: str) -> None:
     environment = [variaveis]
     lastConditionalResult = {}
     errorImmunity = []
+    lastEval = []
 
     def execErro(erro: Erro) -> None|int:
         if not errorImmunity:
@@ -18,7 +19,10 @@ def execute(nodes: list, variaveis: dict, funcoes: dict, nodesIndex: dict) -> No
             return nodePos
 
     def evaluate(node: object, operation: object) -> any:
-        return Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=operation, variaveis=environment[-1])
+        nonlocal lastEval
+        res = Eval(variaveis=environment[-1], askNode=node).executeAst(operationAst=operation, variaveis=environment[-1])
+        lastEval = [node, operation, res]
+        return res
 
     nodePos = 0
     while nodePos < len(nodes):
@@ -216,5 +220,13 @@ def execute(nodes: list, variaveis: dict, funcoes: dict, nodesIndex: dict) -> No
             case Exit():
                 return
 
+        if modo == "debug":
+            if lastEval and lastEval[2] != None:
+                lastEval[2] = "lista" if isinstance(lastEval[2], list) else "mapa" if isinstance(lastEval[2], dict) else lastEval[2]
+
+                print(f"{lastEval[0].linha[1]} - ", end='')
+                print(f"\033[34m{''.join(lastEval[0].linha[0])}\033[0m ", end='')
+                print(f"resultou em \033[34m{lastEval[2]}\033[0m ")
+            lastEval = []
+
         nodePos += 1
-    return
