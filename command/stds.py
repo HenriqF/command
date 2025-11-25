@@ -1,39 +1,35 @@
 from nos import Erro
 import random
 
-#Nome da funcao : qtd de argumentos
+#Nome da funcao : [qtd de argumentos, nome funcao]
 funcArgs = { 
-    "objLength" : 1,
-    "objSort" : 1,
-    "showList" : 1,
-    "showMap" : 1,
-    "sumList": 1,
-    "objType": 1,
-    "stripMarc": 1,
+    "length" : [1, "cmdLength"],
+    "sort" : [1, "cmdSort"],
+    "showList" : [1, "cmdShowList"],
+    "showMap" : [1, "cmdShowMap"],
+    "sum": [1, "cmdSum"],
+    "type": [1, "cmdType"],
+    "stripMarc": [1, "cmdStripMarc"],
 
-    "indexOf": 2,
-    "randomNum": 2,
+    "indexOf": [2, "cmdIndexOf"],
+    "random": [2, "cmdRandom"],
+    "add": [2, "cmdAdd"],
+    "delete": [2, "cmdDelete"],
 
-    "add": 2,
-    "delete": 2,
-
-    "set":3,
-    "insert": 3,
-    
+    "set": [3, "cmdSet"],
+    "insert": [3, "cmdInsert"],
 }
 
 def stdFuncs() -> dict:
     return funcArgs
 
-def stdHandler(node, vars, args) -> any:
-    if funcArgs[node.execWho] != len(node.argumentos):
+def stdHandler(node, args) -> any:
+    if funcArgs[node.execWho][0] != len(node.argumentos):
         return Erro(linha=node.linha, tipo="Quantia de argumentos indevida.")
-    result = globals()[node.execWho](args)
-    return result
+    return globals()[funcArgs[node.execWho][1]](args)
 
 #builtins:
-
-def set(obj: any) -> list | str | dict:
+def cmdSet(obj: any) -> list | str | dict:
     """Usado para alterar o valor de argumento 1 dentro de argumento 0 para argumento 2. Retorna -1 em caso de erro."""
     if isinstance(obj[2], (list, dict)):
         return -1 
@@ -58,7 +54,7 @@ def set(obj: any) -> list | str | dict:
     else:
         return -1
     
-def insert(obj: any) -> list | str | dict:
+def cmdInsert(obj: any) -> list | str | dict:
     """Insere argumento 2 no indice argumento 1 dentro de argumento 0. Retorna -1 em caso de erro."""
     if isinstance(obj[2], (list, dict)):
         return -1
@@ -83,7 +79,7 @@ def insert(obj: any) -> list | str | dict:
     else:
         return -1
 
-def delete(obj: any) -> list | str | dict:
+def cmdDelete(obj: any) -> list | str | dict:
     """Deleta argumento 1 de argumento 0. Retorna -1 em caso de erro."""
     if isinstance(obj[0], dict): #Mapas
         if obj[1] in obj[0]:
@@ -109,19 +105,20 @@ def delete(obj: any) -> list | str | dict:
     else:
         return -1
 
-def add(obj: any) -> list | str:
+def cmdAdd(obj: any) -> list | str:
     """adiciona ao fim de uma lista / str (argumento 0) argumento 1. Retrona -1 em caso de erro."""
     if isinstance(obj[1], (list, dict)):
         return -1
     if isinstance(obj[0], list):
         new = obj[0].copy()
-        return(new.append(obj[1]))
+        new.append(obj[1])
+        return(new)
     elif isinstance(obj[0], str):
         return(obj[0] + str(obj[1]))
     else:
         return -1
 
-def showList(obj: any) -> int:
+def cmdShowList(obj: any) -> int:
     """Mostra uma lista, retorna -1 em caso de erro."""
     if isinstance(obj[0], list):
         for i in range(len(obj[0])):
@@ -136,7 +133,7 @@ def showList(obj: any) -> int:
     else:
         return(-1)
 
-def showMap(obj: any) -> int:
+def cmdShowMap(obj: any) -> int:
     """Mostra um mapa, retorna -1 em caso de erro."""
     if isinstance(obj[0], dict):
         content = ""
@@ -153,7 +150,7 @@ def showMap(obj: any) -> int:
     else:
         return(-1)
 
-def randomNum(obj: any) -> int:
+def cmdRandom(obj: any) -> int:
     """Gera um número aleatório dentro do intervalo determinado. retorna -1 em caso de erro."""
     if isinstance(obj[0], int) and isinstance(obj[1], int):
         if obj[0] < obj[1]:
@@ -161,14 +158,14 @@ def randomNum(obj: any) -> int:
         return(-1)
     return(-1)
 
-def objLength(obj: any) -> int:
+def cmdLength(obj: any) -> int:
     """Mostra o comprimento de um objeto (texto, lista ou mapa), retorna -1 em caso de erro."""
     if isinstance(obj[0], (str,list,dict)):
         return(len(obj[0]))
     else:
         return(-1)
     
-def objSort(obj: any) -> list | str | int:
+def cmdSort(obj: any) -> list | str | int:
     """Organiza um objeto (seja lista ou texto), retorna -1 em caso de erro."""
     if isinstance(obj[0], list):
         return(sorted(obj[0]))
@@ -177,7 +174,7 @@ def objSort(obj: any) -> list | str | int:
     else:
         return(-1)
 
-def sumList(obj: any) -> int:
+def cmdSum(obj: any) -> int:
     """Retorna a soma dos itens de uma lista, retorna -1 em caso de erro."""
     if isinstance(obj[0], list):
         try:
@@ -187,14 +184,14 @@ def sumList(obj: any) -> int:
     else:
         return(-1)
     
-def objType(obj: any) -> str:
+def cmdType(obj: any) -> str:
     """Retorna o tipo do objeto"""
-    tipos = {int:"num",float:"num",str:"str",list:"lst",dict:"dic"}
+    tipos = {int:"num",float:"num",str:"str",list:"list",dict:"map"}
     if obj[0] == None:
         return("nil")
     return(tipos[type(obj[0])])
 
-def indexOf(obj: any) -> int:
+def cmdIndexOf(obj: any) -> int:
     """Mostra onde argumento 0 está em argumento 1, retorna -1 em caso de erro."""
     if not(isinstance(obj[1], (list,str))):
         return(-1)
@@ -203,7 +200,7 @@ def indexOf(obj: any) -> int:
     except:
         return(-1)
     
-def stripMarc(obj: any) -> str | int:
+def cmdStripMarc(obj: any) -> str | int:
     """Remove aspas simples das pontas de um texto, retorna -1 em caso de erro."""
     if isinstance(obj[0], str):
         if len(obj[0]) > 1 and obj[0][0] == obj[0][-1] == "'":

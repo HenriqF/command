@@ -81,7 +81,7 @@ def execute(nodes: list, variaveis: dict, funcoes: dict, nodesIndex: dict, modo:
                 if not foundErrorInArgs:
                     if node.execWho not in funcoes:
                         if node.execWho in stdFuncs():
-                            result = stdHandler(node, environment[-1], args)
+                            result = stdHandler(node, args)
                             if isinstance(result, Erro):
                                 nodePos = execErro(result)
                             else:

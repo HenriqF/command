@@ -315,15 +315,15 @@
 
 * Lista de built-ins:
 
-        objLength -> Mostra o comprimento de uma lista/ texto/ mapa.
-        objSort   -> Organiza uma lista/ texto.
+        length -> Mostra o comprimento de uma lista/ texto/ mapa.
+        sort   -> Organiza uma lista/ texto.
         showList  -> Põe no console o conteúdo de uma lista.
         showMap   -> Põe no console o conteúdo de um mapa.
-        sumList   -> Mostra a soma do conteúdo de uma lista.
-        objType   -> Mostra o tipo de dado do objeto.
+        sum  -> Mostra a soma do conteúdo de uma lista.
+        type   -> Mostra o tipo de dado do objeto.
         stripMarc -> Tira tira marcadores de um texto.
         indexOf   -> Mostra onde que o primeiro argumento está dentro do segundo.
-        randomNum -> Gera um número aleatório inteiro entre argumento 0 e 1.
+        random -> Gera um número aleatório inteiro entre argumento 0 e 1.
         add       -> Adiciona ao fim de uma lista / texto (primeiro arg) o conteudo do segundo argumento.
         delete    -> Deleta de uma lista/texto/dicionario (primeiro arg) a posição "segundo argumento".
         set       -> Altera o valor da posição "segundo argumento" dentro do mapa/lista/texto "primeiro argumento" para "terceiro argumento"
@@ -405,3 +405,4 @@
 
 * Comando <b>exit</b>    : Serve para terminar a execução do script;
 * Comando <b>nothing</b> : Serve principalmente para testes. Não faz nada.
+* Comando <b>debug</b>: Pode ser colocado em qualquer lugar, ajuda com debugging.
